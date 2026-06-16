@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <title>EPD — тест NCC (масштабы 1× 2× 4×)</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 14px/1.45 system-ui, sans-serif; background: #1a1a2e; color: #e8e8e8; }
+    header { padding: 16px 20px; background: #16213e; border-bottom: 1px solid #333; }
+    h1 { margin: 0 0 6px; font-size: 18px; }
+    p { margin: 0; color: #9aa; font-size: 13px; }
+    .toolbar { padding: 12px 20px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    input[type=file] { color: #ccc; max-width: 100%; }
+    button {
+      background: #2d6cdf; color: #fff; border: none; border-radius: 6px;
+      padding: 8px 14px; cursor: pointer; font-size: 13px;
+    }
+    button:disabled { opacity: 0.5; cursor: wait; }
+    button.secondary { background: #444; }
+    label { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+    #status { padding: 0 20px 8px; color: #8cf; font-size: 13px; min-height: 1.4em; }
+    #grid { padding: 12px 20px 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); gap: 16px; }
+    .card { background: #222; border-radius: 8px; overflow: hidden; border: 1px solid #333; }
+    .card h3 { margin: 0; padding: 8px 12px; font-size: 12px; color: #aaa; background: #1c1c1c; }
+    .canvas-wrap { position: relative; background: #fff; line-height: 0; }
+    .canvas-wrap canvas { display: block; max-width: 100%; height: auto; }
+    .meta { padding: 10px 12px; font-size: 12px; color: #bbb; }
+    .meta table { width: 100%; border-collapse: collapse; }
+    .meta th, .meta td { text-align: left; padding: 3px 6px; border-bottom: 1px solid #333; }
+    .meta th { color: #888; font-weight: 600; }
+    .ok { color: #6f6; }
+    .weak { color: #fc6; }
+    .fail { color: #f66; }
+    .compare { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 8px; background: #111; }
+    .compare .mini { text-align: center; font-size: 11px; color: #888; }
+    .compare canvas { width: 100%; background: #fff; border-radius: 2px; }
+    .hint { padding: 8px 20px 16px; color: #666; font-size: 12px; }
+    code { background: #2a2a40; padding: 1px 5px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Тест NCC click-капчи <span id="solverVer" style="color:#6cf;font-size:14px"></span></h1>
+    <p>Масштабы шаблона: <strong>1×, 2×, 4×</strong> (от обрезанной иконки на полоске). Composite JPG или пара main + strip.</p>
+  </header>
+  <div class="toolbar">
+    <input type="file" id="compositeFiles" accept="image/jpeg,image/png" multiple>
+    <input type="file" id="mainFile" accept="image/jpeg,image/png">
+    <input type="file" id="stripFile" accept="image/jpeg,image/png">
+    <button type="button" id="runBtn" disabled>Запустить NCC</button>
+    <label><input type="checkbox" id="perScale" checked> Сравнить каждый масштаб отдельно</label>
+    <label><input type="checkbox" id="useBgRemove"> BG-remove на main</label>
+  </div>
+  <div id="status">Загрузите изображение…</div>
+  <div id="grid"></div>
+  <p class="hint">
+    Локально из корня расширения: <code>npx serve .</code> →
+    <code>/captcha/ncc-preview.html</code>.
+    Composite — как в папке captcha (поле + полоска внизу).
+  </p>
+
+  <script src="../bg-remove.js"></script>
+  <script src="../ncc-core.js"></script>
+  <script>
+    const COLORS = ["#e6194b", "#3cb44b", "#4363d8", "#f58231", "#911eb4"];
+    const solverVer = document.getElementById("solverVer");
+    const statusEl = document.getElementById("status");
+    const grid = document.getElementById("grid");
+    const runBtn = document.getElementById("runBtn");
+    const compositeFiles = document.getElementById("compositeFiles");
+    const mainFile = document.getElementById("mainFile");
+    const stripFile = document.getElementById("stripFile");
+    const perScale = document.getElementById("perScale");
+    const useBgRemove = document.getElementById("useBgRemove");
+
+    let pendingMain = null;
+    let pendingStrip = null;
+    let pendingName = "captcha";
+
+    if (solverVer) {
+      solverVer.textContent = "(" + (window.EPD_NCC_SOLVER?.version || "?") +
+        " scales=" + (window.EPD_NCC_SOLVER?.scales?.join(",") || "?") + ")";
+    }
+
+    function loadImageFile(file) {
+      return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+          const c = document.createElement("canvas");
+          c.width = img.naturalWidth;
+          c.height = img.naturalHeight;
+          c.getContext("2d").drawImage(img, 0, 0);
+          URL.revokeObjectURL(url);
+          resolve({ name: file.name, data: c.getContext("2d").getImageData(0, 0, c.width, c.height) });
+        };
+        img.onerror = reject;
+        img.src = url;
+      });
+    }
+
+    function splitComposite(data) {
+      if (window.EPD_BG_REMOVE?.splitComposite) {
+        const s = window.EPD_BG_REMOVE.splitComposite(data);
+        return { main: s.main, strip: s.strip };
+      }
+      const h = data.height;
+      const mainH = Math.round(h * 0.78);
+      const main = new ImageData(data.width, mainH);
+      main.data.set(data.data.subarray(0, mainH * data.width * 4));
+      const stripH = h - mainH;
+      const strip = new ImageData(data.width, stripH);
+      strip.data.set(data.data.subarray(mainH * data.width * 4));
+      return { main, strip };
+    }
+
+    function drawResult(mainImg, result, title) {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `<h3>${title}</h3>`;
+
+      const wrap = document.createElement("div");
+      wrap.className = "canvas-wrap";
+      const canvas = document.createElement("canvas");
+      canvas.width = mainImg.width;
+      canvas.height = mainImg.height;
+      const ctx = canvas.getContext("2d");
+      const tmp = document.createElement("canvas");
+      tmp.width = mainImg.width;
+      tmp.height = mainImg.height;
+      tmp.getContext("2d").putImageData(mainImg, 0, 0);
+      ctx.drawImage(tmp, 0, 0);
+
+      const coords = result?.coords || [];
+      coords.forEach((p, i) => {
+        const col = COLORS[i % COLORS.length];
+        ctx.strokeStyle = col;
+        ctx.fillStyle = col;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.font = "bold 14px sans-serif";
+        ctx.fillText(String(i + 1), p.x + 12, p.y - 8);
+      });
+      wrap.appendChild(canvas);
+      card.appendChild(wrap);
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      if (!result) {
+        meta.innerHTML = `<p class="fail">NCC не вернул координаты</p>`;
+      } else {
+        const cls = result.raceReady ? "ok" : result.deferReady ? "weak" : result.weak ? "weak" : "fail";
+        const confPct = result.conf != null ? (result.conf * 100).toFixed(0) : "?";
+        const per = (result.confs || []).map((c) => (c * 100).toFixed(0) + "%").join(" / ");
+        let scaleRows = "";
+        for (const s of result.scaleInfo || []) {
+          scaleRows += `<tr><td>#${s.icon}</td><td>${s.stripW}×${s.stripH}</td><td>${s.matchW}×${s.matchH}</td><td><b>${s.scaleX}×</b></td></tr>`;
+        }
+        meta.innerHTML = `
+          <p class="${cls}">${result.method || "NCC"} — min ${confPct}%, per-icon: ${per || "—"}</p>
+          <p>race=${result.raceReady ? "OK" : result.deferReady ? "defer" : result.weak ? "weak" : "skip"},
+             cluster=${result.clusterBad ? "dup" : "ok"}</p>
+          <table>
+            <tr><th>icon</th><th>strip trim</th><th>match tpl</th><th>scale</th></tr>
+            ${scaleRows}
+          </table>`;
+      }
+      card.appendChild(meta);
+      return card;
+    }
+
+    function drawMini(mainImg, result, label) {
+      const box = document.createElement("div");
+      box.className = "mini";
+      const title = document.createElement("div");
+      title.textContent = label;
+      box.appendChild(title);
+      const c = document.createElement("canvas");
+      const scale = Math.min(1, 200 / mainImg.width);
+      c.width = Math.round(mainImg.width * scale);
+      c.height = Math.round(mainImg.height * scale);
+      const ctx = c.getContext("2d");
+      const tmp = document.createElement("canvas");
+      tmp.width = mainImg.width;
+      tmp.height = mainImg.height;
+      tmp.getContext("2d").putImageData(mainImg, 0, 0);
+      ctx.drawImage(tmp, 0, 0, c.width, c.height);
+      (result?.coords || []).forEach((p, i) => {
+        ctx.strokeStyle = COLORS[i % COLORS.length];
+        ctx.beginPath();
+        ctx.arc(p.x * scale, p.y * scale, 5, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+      box.appendChild(c);
+      const conf = document.createElement("div");
+      conf.textContent = result?.conf != null ? (result.conf * 100).toFixed(0) + "%" : "fail";
+      box.appendChild(conf);
+      return box;
+    }
+
+    async function prepareMainStrip(main, strip) {
+      if (useBgRemove.checked && window.EPD_BG_REMOVE?.removeBackground) {
+        statusEl.textContent = "BG-remove…";
+        const clean = window.EPD_BG_REMOVE.removeBackground(main).imageData;
+        return { main: clean, strip };
+      }
+      return { main, strip };
+    }
+
+    async function runOnPair(main, strip, name) {
+      grid.innerHTML = "";
+      statusEl.textContent = "NCC…";
+      runBtn.disabled = true;
+      const t0 = performance.now();
+      const { main: mainImg, strip: stripImg } = await prepareMainStrip(main, strip);
+
+      const combined = await window.EPD_NCC_SOLVER.solveClickNCCPeaksFromImageData(mainImg, stripImg, (m) => {
+        statusEl.textContent = m;
+      });
+
+      if (perScale.checked) {
+        const per = await window.EPD_NCC_SOLVER.solvePerScale(mainImg, stripImg, [1, 2, 4]);
+        const cmpCard = document.createElement("div");
+        cmpCard.className = "card";
+        cmpCard.innerHTML = `<h3>${name} — сравнение масштабов 1× / 2× / 4×</h3>`;
+        const row = document.createElement("div");
+        row.className = "compare";
+        for (const { scale, result } of per) {
+          row.appendChild(drawMini(mainImg, result, scale + "×"));
+        }
+        cmpCard.appendChild(row);
+        grid.appendChild(cmpCard);
+      }
+
+      grid.appendChild(drawResult(mainImg, combined, `${name} — combined scales [1,2,4] (${(performance.now() - t0).toFixed(0)} ms)`));
+      statusEl.textContent = combined
+        ? `Готово за ${(performance.now() - t0).toFixed(0)} ms — ${combined.coords?.length || 0} точек`
+        : `Нет результата (${(performance.now() - t0).toFixed(0)} ms)`;
+      runBtn.disabled = false;
+    }
+
+    runBtn.addEventListener("click", () => {
+      if (pendingMain && pendingStrip) {
+        runOnPair(pendingMain, pendingStrip, pendingName);
+      }
+    });
+
+    compositeFiles.addEventListener("change", async () => {
+      grid.innerHTML = "";
+      for (const file of compositeFiles.files) {
+        const { name, data } = await loadImageFile(file);
+        const { main, strip } = splitComposite(data);
+        if (!strip) continue;
+        pendingMain = main;
+        pendingStrip = strip;
+        pendingName = name;
+        runBtn.disabled = false;
+        statusEl.textContent = `Загружен ${name} (${data.width}×${data.height}) — нажмите «Запустить NCC»`;
+        await runOnPair(main, strip, name);
+      }
+    });
+
+    function updatePairState() {
+      runBtn.disabled = !(pendingMain && pendingStrip);
+    }
+
+    mainFile.addEventListener("change", async () => {
+      const f = mainFile.files[0];
+      if (!f) return;
+      pendingMain = (await loadImageFile(f)).data;
+      pendingName = f.name.replace(/\.[^.]+$/, "");
+      updatePairState();
+      statusEl.textContent = `Main: ${f.name}` + (pendingStrip ? " — можно запускать" : " — выберите strip");
+      if (pendingStrip) runOnPair(pendingMain, pendingStrip, pendingName);
+    });
+
+    stripFile.addEventListener("change", async () => {
+      const f = stripFile.files[0];
+      if (!f) return;
+      pendingStrip = (await loadImageFile(f)).data;
+      updatePairState();
+      statusEl.textContent = `Strip: ${f.name}` + (pendingMain ? " — можно запускать" : " — выберите main");
+      if (pendingMain) runOnPair(pendingMain, pendingStrip, pendingName);
+    });
+  </script>
+</body>
+</html>

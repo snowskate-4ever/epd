@@ -1,0 +1,217 @@
+{
+  "build": "10.06.2026 (v4.18 — ML-only + manual label)",
+  "generated": "2026-06-10T10:18:17.207Z",
+  "tag": "label",
+  "url": "https://eopp.epd-portal.ru/ru/reservations/reservation/4a49b4ca-332d-4c6e-980d-94492332ad3e?utm_referrer=https:%2F%2Fesia.epd-portal.ru%2F",
+  "cache": {
+    "tiles": 0,
+    "positions": {}
+  },
+  "analytics": {
+    "summary": "Работал 36с. Проверок слотов: 0 (найдено: 0, пусто: 0). Капч запрошено: 2, решено: 0, провалено: 0.",
+    "recommendations": [
+      "✅ Плагин работает нормально, ожидает слоты."
+    ],
+    "stats": {
+      "runtime_sec": 36,
+      "slots_checks": 0,
+      "slots_found": 0,
+      "slots_empty": 0,
+      "captcha_requests": 2,
+      "captcha_success": 0,
+      "captcha_fail": 0,
+      "captcha_types": {},
+      "ai_calls": 0,
+      "ai_success": 0,
+      "ai_fail": 0,
+      "ai_avg_ms": 0,
+      "ai_total_cost_rub": 0,
+      "ai_models_used": {},
+      "validate_ok": 2,
+      "validate_fail": 0,
+      "validate_500": 0,
+      "token_expired": 0,
+      "waf_blocks": 0,
+      "waf_cooldowns": 0,
+      "errors_count": 0,
+      "errors": [],
+      "test_runs": 0,
+      "test_validate_ok": 0,
+      "test_validate_fail": 0
+    },
+    "timeline": []
+  },
+  "entries": 34,
+  "logs": [
+    {
+      "t": "0.0",
+      "l": "L",
+      "m": "[EPD ML] model from IndexedDB cache (2351KB)"
+    },
+    {
+      "t": "0.2",
+      "l": "L",
+      "m": "[EPD ML] model loaded за 232мс"
+    },
+    {
+      "t": "0.9",
+      "l": "L",
+      "m": "[EPD SignalR] Event: UnreadCount [109]"
+    },
+    {
+      "t": "1.6",
+      "l": "L",
+      "m": "[EPD Helper v2] Injected for 4a49b4ca-332d-4c6e-980d-94492332ad3e"
+    },
+    {
+      "t": "6.9",
+      "l": "L",
+      "m": "[EPD] 🏢 Create params: 93c9939a-2182-4e78-98b4-0cf314b09cfa 5e21ddaf-6bab-4173-8600-20e7a9ff6d87 1"
+    },
+    {
+      "t": "7.1",
+      "l": "L",
+      "m": "[EPD] ♻️ Intercepted slots, status: 200 (WAF: 1/16)"
+    },
+    {
+      "t": "7.1",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha REQUEST: {\"payload\":{\"reservationId\":\"4a49b4ca-332d-4c6e-980d-94492332ad3e\",\"facilityId\":\"93c9939a-2182-4e78-98b4-0cf314b09cfa\",\"timeSlotData\":\"2026-06-10T14:00:00.000Z\",\"encryptedTso\":null}}"
+    },
+    {
+      "t": "7.2",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha RESPONSE status: 200 type: 1 tiles: undefined variants: undefined hasImage: true hasIcons: true token: zc_ia4IMJfimyGHMp_Mt"
+    },
+    {
+      "t": "7.2",
+      "l": "L",
+      "m": "[EPD] ⚡ NEW CAPTCHA TYPE: click-based (image + icons → coordinates)"
+    },
+    {
+      "t": "11.3",
+      "l": "L",
+      "m": "[EPD LABEL] point 1 {\"x\":338,\"y\":19}"
+    },
+    {
+      "t": "13.3",
+      "l": "L",
+      "m": "[EPD LABEL] point 2 {\"x\":439,\"y\":99}"
+    },
+    {
+      "t": "15.4",
+      "l": "L",
+      "m": "[EPD LABEL] point 3 {\"x\":110,\"y\":188}"
+    },
+    {
+      "t": "18.7",
+      "l": "L",
+      "m": "[EPD LABEL] point 4 {\"x\":112,\"y\":37}"
+    },
+    {
+      "t": "20.2",
+      "l": "L",
+      "m": "[EPD LABEL] point 5 {\"x\":34,\"y\":113}"
+    },
+    {
+      "t": "21.3",
+      "l": "L",
+      "m": "[EPD ML:collect] labeled a7c1261f-867a-434d-8b03-987614b73682 valid=true (5 pts, 44 total)"
+    },
+    {
+      "t": "21.3",
+      "l": "L",
+      "m": "[EPD LABEL] saved a7c1261f-867a-434d-8b03-987614b73682 [{\"x\":338,\"y\":19},{\"x\":439,\"y\":99},{\"x\":110,\"y\":188},{\"x\":112,\"y\":37},{\"x\":34,\"y\":113}]"
+    },
+    {
+      "t": "21.3",
+      "l": "L",
+      "m": "[EPD] ✅ validate: HTTP 200 | isValid=true | token=zc_ia4IMJfimyGH... | answer=(338,19) (439,99) (110,188) (112,37) (34,113)"
+    },
+    {
+      "t": "21.4",
+      "l": "L",
+      "m": "[EPD ML:collect] a7c1261f-867a-434d-8b03-987614b73682 valid=true"
+    },
+    {
+      "t": "21.4",
+      "l": "L",
+      "m": "[EPD LABEL] validate: true"
+    },
+    {
+      "t": "23.1",
+      "l": "L",
+      "m": "[EPD] 🏢 Create params: 93c9939a-2182-4e78-98b4-0cf314b09cfa 5e21ddaf-6bab-4173-8600-20e7a9ff6d87 1"
+    },
+    {
+      "t": "23.2",
+      "l": "L",
+      "m": "[EPD] ♻️ Intercepted slots, status: 200 (WAF: 2/16)"
+    },
+    {
+      "t": "23.2",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha REQUEST: {\"payload\":{\"reservationId\":\"4a49b4ca-332d-4c6e-980d-94492332ad3e\",\"facilityId\":\"93c9939a-2182-4e78-98b4-0cf314b09cfa\",\"timeSlotData\":\"2026-06-10T14:00:00.000Z\",\"encryptedTso\":null}}"
+    },
+    {
+      "t": "24.4",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha RESPONSE status: 200 type: 1 tiles: undefined variants: undefined hasImage: true hasIcons: true token: zc_79oXdclCl396VhRqN"
+    },
+    {
+      "t": "24.4",
+      "l": "L",
+      "m": "[EPD] ⚡ NEW CAPTCHA TYPE: click-based (image + icons → coordinates)"
+    },
+    {
+      "t": "27.6",
+      "l": "L",
+      "m": "[EPD LABEL] point 1 {\"x\":260,\"y\":166}"
+    },
+    {
+      "t": "29.4",
+      "l": "L",
+      "m": "[EPD LABEL] point 2 {\"x\":195,\"y\":33}"
+    },
+    {
+      "t": "31.3",
+      "l": "L",
+      "m": "[EPD LABEL] point 3 {\"x\":200,\"y\":200}"
+    },
+    {
+      "t": "33.1",
+      "l": "L",
+      "m": "[EPD LABEL] point 4 {\"x\":261,\"y\":23}"
+    },
+    {
+      "t": "34.8",
+      "l": "L",
+      "m": "[EPD LABEL] point 5 {\"x\":192,\"y\":121}"
+    },
+    {
+      "t": "36.0",
+      "l": "L",
+      "m": "[EPD ML:collect] labeled 7974dd46-4f6f-4846-b882-68c168b8f353 valid=true (5 pts, 45 total)"
+    },
+    {
+      "t": "36.0",
+      "l": "L",
+      "m": "[EPD LABEL] saved 7974dd46-4f6f-4846-b882-68c168b8f353 [{\"x\":260,\"y\":166},{\"x\":195,\"y\":33},{\"x\":200,\"y\":200},{\"x\":261,\"y\":23},{\"x\":192,\"y\":121}]"
+    },
+    {
+      "t": "36.1",
+      "l": "L",
+      "m": "[EPD] ✅ validate: HTTP 200 | isValid=true | token=zc_79oXdclCl396... | answer=(260,166) (195,33) (200,200) (261,23) (192,121)"
+    },
+    {
+      "t": "36.2",
+      "l": "L",
+      "m": "[EPD ML:collect] 7974dd46-4f6f-4846-b882-68c168b8f353 valid=true"
+    },
+    {
+      "t": "36.2",
+      "l": "L",
+      "m": "[EPD LABEL] validate: true"
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <title>EPD — тест удаления фона капчи</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 14px/1.4 system-ui, sans-serif; background: #1a1a2e; color: #e8e8e8; }
+    header { padding: 16px 20px; background: #16213e; border-bottom: 1px solid #333; }
+    h1 { margin: 0 0 6px; font-size: 18px; }
+    p { margin: 0; color: #9aa; font-size: 13px; }
+    .toolbar { padding: 12px 20px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    input[type=file] { color: #ccc; }
+    label { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+    #grid { padding: 12px 20px 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 16px; }
+    .card { background: #222; border-radius: 8px; overflow: hidden; border: 1px solid #333; }
+    .card h3 { margin: 0; padding: 8px 12px; font-size: 12px; color: #aaa; background: #1c1c1c; word-break: break-all; }
+    .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: #111; }
+    .pair div { text-align: center; padding: 6px; }
+    .pair span { display: block; font-size: 11px; color: #777; margin-bottom: 4px; }
+    .pair img, .pair canvas { max-width: 100%; height: auto; border-radius: 2px; background: #fff; }
+    .strip-icons { display: flex; gap: 6px; padding: 10px 12px; background: #1a1a1a; flex-wrap: wrap; justify-content: flex-start; }
+    .strip-icons span { font-size: 10px; color: #666; display: block; text-align: center; margin-bottom: 2px; }
+    .strip-icon { text-align: center; }
+    .strip-icon img { max-height: 48px; width: auto; background: #fff; border-radius: 2px; }
+    .hint { padding: 8px 20px 16px; color: #666; font-size: 12px; }
+    code { background: #2a2a40; padding: 1px 5px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Тест BG-remove для click-капчи <span id="algoVer" style="color:#6cf;font-size:14px"></span></h1>
+    <p>Выберите JPG из папки <code>captcha/</code> — поле + нижняя полоса с 5 иконками. Версия <strong>v131</strong> — <kbd>Ctrl+Shift+R</kbd>.</p>
+  </header>
+  <div class="toolbar">
+    <input type="file" id="files" accept="image/jpeg,image/png" multiple>
+    <label>Режим:
+      <select id="mode">
+        <option value="auto">Авто</option>
+        <option value="patchwork">Плитки (зелёный)</option>
+        <option value="pattern">Паттерн (розовый)</option>
+        <option value="gradient">Градиент</option>
+      </select>
+    </label>
+    <label><input type="checkbox" id="showWeight"> Карта веса (FG)</label>
+  </div>
+  <div id="grid"></div>
+  <p class="hint">Локально: <code>npx serve .</code> в корне расширения → открыть <code>/captcha/bg-preview.html</code></p>
+
+  <script src="../bg-remove.js?v=129"></script>
+  <script>
+    const algoVer = document.getElementById("algoVer");
+    if (algoVer) algoVer.textContent = "(" + (window.EPD_BG_REMOVE?.version || "нет версии") + ")";
+    const filesIn = document.getElementById("files");
+    const grid = document.getElementById("grid");
+    const modeIn = document.getElementById("mode");
+    const showWeight = document.getElementById("showWeight");
+    let lastFiles = [];
+
+    modeIn.addEventListener("change", () => {
+      if (lastFiles.length) renderAll(lastFiles);
+    });
+    showWeight.addEventListener("change", () => {
+      if (lastFiles.length) renderAll(lastFiles);
+    });
+
+    filesIn.addEventListener("change", () => {
+      lastFiles = [...filesIn.files];
+      renderAll(lastFiles);
+    });
+
+    function loadImage(file) {
+      return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+          const c = document.createElement("canvas");
+          c.width = img.naturalWidth;
+          c.height = img.naturalHeight;
+          c.getContext("2d").drawImage(img, 0, 0);
+          URL.revokeObjectURL(url);
+          resolve({ name: file.name, data: c.getContext("2d").getImageData(0, 0, c.width, c.height) });
+        };
+        img.onerror = reject;
+        img.src = url;
+      });
+    }
+
+    function weightToCanvas(weight, w, h) {
+      const c = document.createElement("canvas");
+      c.width = w;
+      c.height = h;
+      const ctx = c.getContext("2d");
+      const img = ctx.createImageData(w, h);
+      for (let i = 0; i < w * h; i++) {
+        const v = Math.round(weight[i] * 255);
+        const o = i * 4;
+        img.data[o] = v;
+        img.data[o + 1] = v;
+        img.data[o + 2] = v;
+        img.data[o + 3] = 255;
+      }
+      ctx.putImageData(img, 0, 0);
+      return c;
+    }
+
+    async function renderAll(fileList) {
+      grid.innerHTML = "";
+      const mode = modeIn.value;
+      const opts = {};
+      if (mode === "patchwork") opts.forceStyle = "patchwork";
+      else if (mode === "pattern") opts.forceStyle = "pattern";
+      else if (mode === "gradient") opts.forceStyle = "gradient";
+      for (const file of fileList) {
+        try {
+          const { name, data } = await loadImage(file);
+          const split = window.EPD_BG_REMOVE.splitComposite(data);
+          const result = window.EPD_BG_REMOVE.removeBackgroundComposite(data, opts);
+          const clean = result.composite || result.imageData;
+          const style = result.style || mode;
+          const origUrl = window.EPD_BG_REMOVE.imageDataToDataUrl(data);
+          const cleanUrl = window.EPD_BG_REMOVE.imageDataToDataUrl(clean, "image/png");
+          const stripN = result.stripIconCount || 0;
+
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `<h3>${name} (${data.width}×${data.height}, поле ${split.main.height}px, ${style}, ${window.EPD_BG_REMOVE?.version || "?"}, иконок внизу: ${stripN})</h3>`;
+          const pair = document.createElement("div");
+          pair.className = "pair";
+
+          const left = document.createElement("div");
+          left.innerHTML = `<span>Оригинал (поле + полоса)</span><img src="${origUrl}" alt="orig">`;
+          const right = document.createElement("div");
+          if (showWeight.checked) {
+            right.innerHTML = `<span>FG weight (поле)</span>`;
+            right.appendChild(weightToCanvas(result.weight, split.main.width, split.main.height));
+          } else {
+            right.innerHTML = `<span>Белый / чёрные (поле + полоса)</span><img src="${cleanUrl}" alt="clean">`;
+          }
+          pair.append(left, right);
+          card.appendChild(pair);
+
+          if (result.stripIcons?.length && !showWeight.checked) {
+            const row = document.createElement("div");
+            row.className = "strip-icons";
+            result.stripIcons.forEach((icon, idx) => {
+              const box = document.createElement("div");
+              box.className = "strip-icon";
+              const url = window.EPD_BG_REMOVE.imageDataToDataUrl(icon, "image/png");
+              box.innerHTML = `<span>#${idx + 1}</span><img src="${url}" alt="icon${idx}">`;
+              row.appendChild(box);
+            });
+            card.appendChild(row);
+          }
+          grid.appendChild(card);
+        } catch (e) {
+          const err = document.createElement("div");
+          err.className = "card";
+          err.textContent = `${file.name}: ${e.message}`;
+          grid.appendChild(err);
+        }
+      }
+    }
+  </script>
+</body>
+</html>

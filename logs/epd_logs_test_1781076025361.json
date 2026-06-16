@@ -1,0 +1,167 @@
+{
+  "build": "10.06.2026 (v4.17 — ML-only, anti-freeze)",
+  "generated": "2026-06-10T07:20:20.014Z",
+  "tag": "test",
+  "url": "https://eopp.epd-portal.ru/ru/reservations/reservation/4a49b4ca-332d-4c6e-980d-94492332ad3e?operations=%257B%2522approveAllowed%2522%253Afalse%252C%2522cancelAllowed%2522%253A99%252C%2522haveCancel%2522%253Atrue%252C%2522haveReschedule%2522%253Atrue%252C%2522haveSerialReschedule%2522%253Afalse%252C%2522rescheduleAllowed%2522%253A1%252C%2522serialRescheduleAllowed%2522%253Anull%257D",
+  "cache": {
+    "tiles": 0,
+    "positions": {}
+  },
+  "analytics": {
+    "summary": "Работал 37с. Проверок слотов: 0 (найдено: 0, пусто: 0). Капч запрошено: 1, решено: 0, провалено: 0.",
+    "recommendations": [
+      "ℹ️ Был только тест solvers без validate. Обновите расширение до v4.8.2+."
+    ],
+    "stats": {
+      "runtime_sec": 37,
+      "slots_checks": 0,
+      "slots_found": 0,
+      "slots_empty": 0,
+      "captcha_requests": 1,
+      "captcha_success": 0,
+      "captcha_fail": 0,
+      "captcha_types": {},
+      "ai_calls": 0,
+      "ai_success": 0,
+      "ai_fail": 0,
+      "ai_avg_ms": 0,
+      "ai_total_cost_rub": 0,
+      "ai_models_used": {},
+      "validate_ok": 0,
+      "validate_fail": 0,
+      "validate_500": 0,
+      "token_expired": 0,
+      "waf_blocks": 0,
+      "waf_cooldowns": 0,
+      "errors_count": 0,
+      "errors": [],
+      "test_runs": 1,
+      "test_validate_ok": 0,
+      "test_validate_fail": 0
+    },
+    "timeline": []
+  },
+  "entries": 24,
+  "logs": [
+    {
+      "t": "0.1",
+      "l": "L",
+      "m": "[EPD ML] model from IndexedDB cache (2351KB)"
+    },
+    {
+      "t": "0.8",
+      "l": "L",
+      "m": "[EPD SignalR] Event: UnreadCount [109]"
+    },
+    {
+      "t": "1.2",
+      "l": "L",
+      "m": "[EPD ML] model loaded за 1165мс"
+    },
+    {
+      "t": "2.0",
+      "l": "L",
+      "m": "[EPD Helper v2] Injected for 4a49b4ca-332d-4c6e-980d-94492332ad3e"
+    },
+    {
+      "t": "4.6",
+      "l": "L",
+      "m": "[EPD] 🏢 Create params: 93c9939a-2182-4e78-98b4-0cf314b09cfa 5e21ddaf-6bab-4173-8600-20e7a9ff6d87 1"
+    },
+    {
+      "t": "4.7",
+      "l": "L",
+      "m": "[EPD] ♻️ Intercepted slots, status: 200 (WAF: 1/16)"
+    },
+    {
+      "t": "4.7",
+      "l": "L",
+      "m": "[EPD TEST] slot: 11:00 - 12:00 date: 2026-06-10 tsd: 2026-06-10T11:00:00.000Z"
+    },
+    {
+      "t": "4.7",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha REQUEST: {\"payload\":{\"reservationId\":\"4a49b4ca-332d-4c6e-980d-94492332ad3e\",\"facilityId\":\"93c9939a-2182-4e78-98b4-0cf314b09cfa\",\"timeSlotData\":\"2026-06-10T11:00:00.000Z\",\"encryptedTso\":null}}"
+    },
+    {
+      "t": "4.9",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha RESPONSE status: 200 type: 1 tiles: undefined variants: undefined hasImage: true hasIcons: true token: zc_esPsFkk1O6nYP6mm3"
+    },
+    {
+      "t": "4.9",
+      "l": "L",
+      "m": "[EPD] ⚡ NEW CAPTCHA TYPE: click-based (image + icons → coordinates)"
+    },
+    {
+      "t": "4.9",
+      "l": "L",
+      "m": "[EPD TEST] type: click tiles: undefined variants: undefined"
+    },
+    {
+      "t": "4.9",
+      "l": "L",
+      "m": "[EPD CLICK] ╔═══════════════════════════════════════════════════╗"
+    },
+    {
+      "t": "4.9",
+      "l": "L",
+      "m": "[EPD CLICK] ║ RACE: MobileNet ML-only (training)               ║"
+    },
+    {
+      "t": "4.9",
+      "l": "L",
+      "m": "[EPD CLICK] ╚═══════════════════════════════════════════════════╝"
+    },
+    {
+      "t": "11.6",
+      "l": "L",
+      "m": "[EPD CLICK:ML] icon scan peaks=4 best_cos=63% за 6587мс"
+    },
+    {
+      "t": "18.0",
+      "l": "L",
+      "m": "[EPD CLICK:ML] icon scan peaks=4 best_cos=64% за 6460мс"
+    },
+    {
+      "t": "24.1",
+      "l": "L",
+      "m": "[EPD CLICK:ML] icon scan peaks=4 best_cos=62% за 6047мс"
+    },
+    {
+      "t": "30.7",
+      "l": "L",
+      "m": "[EPD CLICK:ML] icon scan peaks=4 best_cos=66% за 6637мс"
+    },
+    {
+      "t": "36.7",
+      "l": "L",
+      "m": "[EPD CLICK:ML] icon scan peaks=4 best_cos=65% за 5951мс"
+    },
+    {
+      "t": "36.7",
+      "l": "L",
+      "m": "[EPD CLICK:ML] all 5 icons scanned за 31710мс"
+    },
+    {
+      "t": "36.7",
+      "l": "L",
+      "m": "[EPD CLICK:ML-only] 5 icons, per=63/64/62/66/64%, min=62%, avg=64%, cluster=dup, race=weak за 31772мс"
+    },
+    {
+      "t": "36.7",
+      "l": "L",
+      "m": "[EPD CLICK] ❌ ML-only below threshold (31776мс)"
+    },
+    {
+      "t": "36.7",
+      "l": "L",
+      "m": "[EPD ML:collect] saved d2c6c9bc-f438-4e22-951d-510ba47824e9 (14 total)"
+    },
+    {
+      "t": "36.7",
+      "l": "L",
+      "m": "[EPD ML:collect] d2c6c9bc-f438-4e22-951d-510ba47824e9 valid=false"
+    }
+  ]
+}

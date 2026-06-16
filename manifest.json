@@ -1,0 +1,68 @@
+{
+  "manifest_version": 3,
+  "name": "EPD Helper v3 Orion FAST (10.06.2026 v4.21 ML-only)",
+  "version": "3.4.4",
+  "description": "Click=ML-only (NCC off) | Puzzle=AI+EdgeMatch | WAF bypass | 10.06.2026",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "permissions": [
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://epd.r-softs.ru/*",
+    "https://eopp.epd-portal.ru/*",
+    "https://rucaptcha.com/*",
+    "https://api.aitunnel.ru/*",
+    "https://api3.cap.guru/*",
+    "https://smrtcrm.ru/*"
+  ],
+  "icons": {
+    "16": "icons/active-16x16.png",
+    "32": "icons/active-32x32.png",
+    "64": "icons/active-64x64.png"
+  },
+  "action": {
+    "default_title": "EPD Helper v3 Orion FAST (10.06.2026 v4.21 ML-only)",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "64": "icons/inactive-64x64.png"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "sounds/*.mp3",
+        "inject.js",
+        "models/*.onnx",
+        "models/*.json",
+        "lib/ort/*"
+      ],
+      "matches": ["https://eopp.epd-portal.ru/*"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://eopp.epd-portal.ru/*"],
+      "js": ["inject.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["https://eopp.epd-portal.ru/*"],
+      "js": [
+        "lib/ort/ort.wasm.min.js",
+        "bg-remove.js",
+        "ml-collector.js",
+        "ml-solver.js",
+        "content.js"
+      ],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

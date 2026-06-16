@@ -1,0 +1,331 @@
+{
+  "build": "10.06.2026 (v4.17 — ML-only, anti-freeze)",
+  "generated": "2026-06-10T07:34:54.850Z",
+  "tag": "test",
+  "url": "https://eopp.epd-portal.ru/ru/reservations/reservation/4a49b4ca-332d-4c6e-980d-94492332ad3e?operations=%257B%2522approveAllowed%2522%253Afalse%252C%2522cancelAllowed%2522%253A99%252C%2522haveCancel%2522%253Atrue%252C%2522haveReschedule%2522%253Atrue%252C%2522haveSerialReschedule%2522%253Afalse%252C%2522rescheduleAllowed%2522%253A1%252C%2522serialRescheduleAllowed%2522%253Anull%257D",
+  "cache": {
+    "tiles": 0,
+    "positions": {}
+  },
+  "analytics": {
+    "summary": "Работал 94с. Проверок слотов: 0 (найдено: 0, пусто: 0). Капч запрошено: 2, решено: 0, провалено: 4.",
+    "recommendations": [
+      "❌ Капча не решена ни разу. AI даёт неточные координаты. Возможные причины:",
+      "  → AI округляет координаты (200,140 вместо точных 193,137)",
+      "  → Иконки на изображении слишком мелкие/полупрозрачные для AI",
+      "  → Попробуйте подключить RuCaptcha CoordinatesTask (human workers)",
+      "🔧 Ошибки в логах (2). Проверьте: [EPD]    Error: CaptchaIsNotValid — Ответ капчи не верный",
+      "❌ Тест капчи: координаты отклонены — NCC-only v5.3 (AI off)."
+    ],
+    "stats": {
+      "runtime_sec": 94,
+      "slots_checks": 0,
+      "slots_found": 0,
+      "slots_empty": 0,
+      "captcha_requests": 2,
+      "captcha_success": 0,
+      "captcha_fail": 4,
+      "captcha_types": {},
+      "ai_calls": 0,
+      "ai_success": 0,
+      "ai_fail": 0,
+      "ai_avg_ms": 0,
+      "ai_total_cost_rub": 0,
+      "ai_models_used": {},
+      "validate_ok": 0,
+      "validate_fail": 4,
+      "validate_500": 0,
+      "token_expired": 0,
+      "waf_blocks": 0,
+      "waf_cooldowns": 0,
+      "errors_count": 2,
+      "errors": [
+        {
+          "t": "51.4",
+          "msg": "[EPD]    Error: CaptchaIsNotValid — Ответ капчи не верный"
+        },
+        {
+          "t": "93.7",
+          "msg": "[EPD]    Error: CaptchaIsNotValid — Ответ капчи не верный"
+        }
+      ],
+      "test_runs": 2,
+      "test_validate_ok": 0,
+      "test_validate_fail": 2
+    },
+    "timeline": []
+  },
+  "entries": 54,
+  "logs": [
+    {
+      "t": "0.1",
+      "l": "L",
+      "m": "[EPD ML] fetching model from extension package..."
+    },
+    {
+      "t": "0.7",
+      "l": "L",
+      "m": "[EPD ML] model loaded за 721мс"
+    },
+    {
+      "t": "1.6",
+      "l": "L",
+      "m": "[EPD SignalR] Event: UnreadCount [109]"
+    },
+    {
+      "t": "2.7",
+      "l": "L",
+      "m": "[EPD Helper v2] Injected for 4a49b4ca-332d-4c6e-980d-94492332ad3e"
+    },
+    {
+      "t": "17.4",
+      "l": "L",
+      "m": "[EPD] 🏢 Create params: 93c9939a-2182-4e78-98b4-0cf314b09cfa 5e21ddaf-6bab-4173-8600-20e7a9ff6d87 1"
+    },
+    {
+      "t": "17.6",
+      "l": "L",
+      "m": "[EPD] ♻️ Intercepted slots, status: 200 (WAF: 1/16)"
+    },
+    {
+      "t": "17.6",
+      "l": "L",
+      "m": "[EPD TEST] slot: 11:00 - 12:00 date: 2026-06-10 tsd: 2026-06-10T11:00:00.000Z"
+    },
+    {
+      "t": "17.6",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha REQUEST: {\"payload\":{\"reservationId\":\"4a49b4ca-332d-4c6e-980d-94492332ad3e\",\"facilityId\":\"93c9939a-2182-4e78-98b4-0cf314b09cfa\",\"timeSlotData\":\"2026-06-10T11:00:00.000Z\",\"encryptedTso\":null}}"
+    },
+    {
+      "t": "17.8",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha RESPONSE status: 200 type: 1 tiles: undefined variants: undefined hasImage: true hasIcons: true token: zc_-jR9KuF7wnF7CCdXq"
+    },
+    {
+      "t": "17.8",
+      "l": "L",
+      "m": "[EPD] ⚡ NEW CAPTCHA TYPE: click-based (image + icons → coordinates)"
+    },
+    {
+      "t": "17.8",
+      "l": "L",
+      "m": "[EPD TEST] type: click tiles: undefined variants: undefined"
+    },
+    {
+      "t": "17.8",
+      "l": "L",
+      "m": "[EPD CLICK] ╔═══════════════════════════════════════════════════╗"
+    },
+    {
+      "t": "17.8",
+      "l": "L",
+      "m": "[EPD CLICK] ║ RACE: MobileNet ML-only (training)               ║"
+    },
+    {
+      "t": "17.8",
+      "l": "L",
+      "m": "[EPD CLICK] ╚═══════════════════════════════════════════════════╝"
+    },
+    {
+      "t": "24.9",
+      "l": "L",
+      "m": "[EPD CLICK:ML] icon scan peaks=4 best_cos=67% за 7026мс"
+    },
+    {
+      "t": "30.8",
+      "l": "L",
+      "m": "[EPD CLICK:ML] icon scan peaks=4 best_cos=60% за 5951мс"
+    },
+    {
+      "t": "37.1",
+      "l": "L",
+      "m": "[EPD CLICK:ML] icon scan peaks=4 best_cos=61% за 6294мс"
+    },
+    {
+      "t": "43.8",
+      "l": "L",
+      "m": "[EPD CLICK:ML] icon scan peaks=4 best_cos=63% за 6714мс"
+    },
+    {
+      "t": "51.2",
+      "l": "L",
+      "m": "[EPD CLICK:ML] icon scan peaks=4 best_cos=60% за 7372мс"
+    },
+    {
+      "t": "51.2",
+      "l": "L",
+      "m": "[EPD CLICK:ML] all 5 icons scanned за 33383мс"
+    },
+    {
+      "t": "51.2",
+      "l": "L",
+      "m": "[EPD CLICK:ML-only] 5 icons, per=63/60/59/63/58%, min=58%, avg=61%, cluster=ok, race=OK за 33453мс"
+    },
+    {
+      "t": "51.2",
+      "l": "L",
+      "m": "[EPD CLICK] 🏁 ML-only(58%) за 33457мс"
+    },
+    {
+      "t": "51.2",
+      "l": "L",
+      "m": "[EPD ML:collect] saved 4486ab86-ad85-474e-a575-62d32729f7a8 (16 total)"
+    },
+    {
+      "t": "51.2",
+      "l": "L",
+      "m": "[EPD TEST] coords: [{\"x\":426,\"y\":231},{\"x\":62,\"y\":23},{\"x\":22,\"y\":103},{\"x\":178,\"y\":127},{\"x\":102,\"y\":75}]"
+    },
+    {
+      "t": "51.4",
+      "l": "L",
+      "m": "[EPD] ❌ validate: HTTP 400 | isValid=undefined | token=zc_-jR9KuF7wnF7... | answer=(426,231) (62,23) (22,103) (178,127) (102,75)"
+    },
+    {
+      "t": "51.4",
+      "l": "L",
+      "m": "[EPD]    Error: CaptchaIsNotValid — Ответ капчи не верный"
+    },
+    {
+      "t": "51.4",
+      "l": "L",
+      "m": "[EPD] validate: HTTP 400, title=\"CaptchaIsNotValid\", detail=\"Ответ капчи не верный\""
+    },
+    {
+      "t": "51.4",
+      "l": "L",
+      "m": "[EPD ML:collect] 4486ab86-ad85-474e-a575-62d32729f7a8 valid=false"
+    },
+    {
+      "t": "51.4",
+      "l": "L",
+      "m": "[EPD TEST] validate: ❌ isValid=false"
+    },
+    {
+      "t": "61.3",
+      "l": "L",
+      "m": "[EPD] 🏢 Create params: 93c9939a-2182-4e78-98b4-0cf314b09cfa 5e21ddaf-6bab-4173-8600-20e7a9ff6d87 1"
+    },
+    {
+      "t": "61.4",
+      "l": "L",
+      "m": "[EPD] ♻️ Intercepted slots, status: 200 (WAF: 2/16)"
+    },
+    {
+      "t": "61.5",
+      "l": "L",
+      "m": "[EPD TEST] slot: 11:00 - 12:00 date: 2026-06-10 tsd: 2026-06-10T11:00:00.000Z"
+    },
+    {
+      "t": "61.5",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha REQUEST: {\"payload\":{\"reservationId\":\"4a49b4ca-332d-4c6e-980d-94492332ad3e\",\"facilityId\":\"93c9939a-2182-4e78-98b4-0cf314b09cfa\",\"timeSlotData\":\"2026-06-10T11:00:00.000Z\",\"encryptedTso\":null}}"
+    },
+    {
+      "t": "61.6",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha RESPONSE status: 200 type: 1 tiles: undefined variants: undefined hasImage: true hasIcons: true token: zc_dXx6b4fLu3zB9sdLn"
+    },
+    {
+      "t": "61.6",
+      "l": "L",
+      "m": "[EPD] ⚡ NEW CAPTCHA TYPE: click-based (image + icons → coordinates)"
+    },
+    {
+      "t": "61.6",
+      "l": "L",
+      "m": "[EPD TEST] type: click tiles: undefined variants: undefined"
+    },
+    {
+      "t": "61.6",
+      "l": "L",
+      "m": "[EPD CLICK] ╔═══════════════════════════════════════════════════╗"
+    },
+    {
+      "t": "61.6",
+      "l": "L",
+      "m": "[EPD CLICK] ║ RACE: MobileNet ML-only (training)               ║"
+    },
+    {
+      "t": "61.6",
+      "l": "L",
+      "m": "[EPD CLICK] ╚═══════════════════════════════════════════════════╝"
+    },
+    {
+      "t": "67.2",
+      "l": "L",
+      "m": "[EPD CLICK:ML] icon scan peaks=4 best_cos=55% за 5506мс"
+    },
+    {
+      "t": "73.6",
+      "l": "L",
+      "m": "[EPD CLICK:ML] icon scan peaks=4 best_cos=63% за 6431мс"
+    },
+    {
+      "t": "80.2",
+      "l": "L",
+      "m": "[EPD CLICK:ML] icon scan peaks=4 best_cos=59% за 6560мс"
+    },
+    {
+      "t": "86.8",
+      "l": "L",
+      "m": "[EPD CLICK:ML] icon scan peaks=4 best_cos=56% за 6624мс"
+    },
+    {
+      "t": "93.5",
+      "l": "L",
+      "m": "[EPD CLICK:ML] icon scan peaks=4 best_cos=64% за 6718мс"
+    },
+    {
+      "t": "93.5",
+      "l": "L",
+      "m": "[EPD CLICK:ML] all 5 icons scanned за 31862мс"
+    },
+    {
+      "t": "93.5",
+      "l": "L",
+      "m": "[EPD CLICK:ML-only] 5 icons, per=52/61/56/56/64%, min=52%, avg=58%, cluster=ok, race=OK за 31929мс"
+    },
+    {
+      "t": "93.5",
+      "l": "L",
+      "m": "[EPD CLICK] 🏁 ML-only(52%) за 31931мс"
+    },
+    {
+      "t": "93.6",
+      "l": "L",
+      "m": "[EPD ML:collect] saved 4bd6d43e-7758-4860-82af-404af3ef7799 (17 total)"
+    },
+    {
+      "t": "93.6",
+      "l": "L",
+      "m": "[EPD TEST] coords: [{\"x\":22,\"y\":75},{\"x\":178,\"y\":179},{\"x\":62,\"y\":207},{\"x\":270,\"y\":231},{\"x\":334,\"y\":115}]"
+    },
+    {
+      "t": "93.7",
+      "l": "L",
+      "m": "[EPD] ❌ validate: HTTP 400 | isValid=undefined | token=zc_dXx6b4fLu3zB... | answer=(22,75) (178,179) (62,207) (270,231) (334,115)"
+    },
+    {
+      "t": "93.7",
+      "l": "L",
+      "m": "[EPD]    Error: CaptchaIsNotValid — Ответ капчи не верный"
+    },
+    {
+      "t": "93.7",
+      "l": "L",
+      "m": "[EPD] validate: HTTP 400, title=\"CaptchaIsNotValid\", detail=\"Ответ капчи не верный\""
+    },
+    {
+      "t": "93.7",
+      "l": "L",
+      "m": "[EPD ML:collect] 4bd6d43e-7758-4860-82af-404af3ef7799 valid=false"
+    },
+    {
+      "t": "93.7",
+      "l": "L",
+      "m": "[EPD TEST] validate: ❌ isValid=false"
+    }
+  ]
+}

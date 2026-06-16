@@ -1,0 +1,747 @@
+{
+  "build": "10.06.2026 (v4.18 — ML-only + manual label)",
+  "generated": "2026-06-10T10:20:02.539Z",
+  "tag": "label",
+  "url": "https://eopp.epd-portal.ru/ru/reservations/reservation/4a49b4ca-332d-4c6e-980d-94492332ad3e?utm_referrer=https:%2F%2Fesia.epd-portal.ru%2F",
+  "cache": {
+    "tiles": 0,
+    "positions": {}
+  },
+  "analytics": {
+    "summary": "Работал 142с. Проверок слотов: 0 (найдено: 0, пусто: 0). Капч запрошено: 9, решено: 0, провалено: 0.",
+    "recommendations": [
+      "✅ Плагин работает нормально, ожидает слоты."
+    ],
+    "stats": {
+      "runtime_sec": 142,
+      "slots_checks": 0,
+      "slots_found": 0,
+      "slots_empty": 0,
+      "captcha_requests": 9,
+      "captcha_success": 0,
+      "captcha_fail": 0,
+      "captcha_types": {},
+      "ai_calls": 0,
+      "ai_success": 0,
+      "ai_fail": 0,
+      "ai_avg_ms": 0,
+      "ai_total_cost_rub": 0,
+      "ai_models_used": {},
+      "validate_ok": 9,
+      "validate_fail": 0,
+      "validate_500": 0,
+      "token_expired": 0,
+      "waf_blocks": 0,
+      "waf_cooldowns": 0,
+      "errors_count": 0,
+      "errors": [],
+      "test_runs": 0,
+      "test_validate_ok": 0,
+      "test_validate_fail": 0
+    },
+    "timeline": []
+  },
+  "entries": 140,
+  "logs": [
+    {
+      "t": "0.0",
+      "l": "L",
+      "m": "[EPD ML] model from IndexedDB cache (2351KB)"
+    },
+    {
+      "t": "0.2",
+      "l": "L",
+      "m": "[EPD ML] model loaded за 232мс"
+    },
+    {
+      "t": "0.9",
+      "l": "L",
+      "m": "[EPD SignalR] Event: UnreadCount [109]"
+    },
+    {
+      "t": "1.6",
+      "l": "L",
+      "m": "[EPD Helper v2] Injected for 4a49b4ca-332d-4c6e-980d-94492332ad3e"
+    },
+    {
+      "t": "6.9",
+      "l": "L",
+      "m": "[EPD] 🏢 Create params: 93c9939a-2182-4e78-98b4-0cf314b09cfa 5e21ddaf-6bab-4173-8600-20e7a9ff6d87 1"
+    },
+    {
+      "t": "7.1",
+      "l": "L",
+      "m": "[EPD] ♻️ Intercepted slots, status: 200 (WAF: 1/16)"
+    },
+    {
+      "t": "7.1",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha REQUEST: {\"payload\":{\"reservationId\":\"4a49b4ca-332d-4c6e-980d-94492332ad3e\",\"facilityId\":\"93c9939a-2182-4e78-98b4-0cf314b09cfa\",\"timeSlotData\":\"2026-06-10T14:00:00.000Z\",\"encryptedTso\":null}}"
+    },
+    {
+      "t": "7.2",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha RESPONSE status: 200 type: 1 tiles: undefined variants: undefined hasImage: true hasIcons: true token: zc_ia4IMJfimyGHMp_Mt"
+    },
+    {
+      "t": "7.2",
+      "l": "L",
+      "m": "[EPD] ⚡ NEW CAPTCHA TYPE: click-based (image + icons → coordinates)"
+    },
+    {
+      "t": "11.3",
+      "l": "L",
+      "m": "[EPD LABEL] point 1 {\"x\":338,\"y\":19}"
+    },
+    {
+      "t": "13.3",
+      "l": "L",
+      "m": "[EPD LABEL] point 2 {\"x\":439,\"y\":99}"
+    },
+    {
+      "t": "15.4",
+      "l": "L",
+      "m": "[EPD LABEL] point 3 {\"x\":110,\"y\":188}"
+    },
+    {
+      "t": "18.7",
+      "l": "L",
+      "m": "[EPD LABEL] point 4 {\"x\":112,\"y\":37}"
+    },
+    {
+      "t": "20.2",
+      "l": "L",
+      "m": "[EPD LABEL] point 5 {\"x\":34,\"y\":113}"
+    },
+    {
+      "t": "21.3",
+      "l": "L",
+      "m": "[EPD ML:collect] labeled a7c1261f-867a-434d-8b03-987614b73682 valid=true (5 pts, 44 total)"
+    },
+    {
+      "t": "21.3",
+      "l": "L",
+      "m": "[EPD LABEL] saved a7c1261f-867a-434d-8b03-987614b73682 [{\"x\":338,\"y\":19},{\"x\":439,\"y\":99},{\"x\":110,\"y\":188},{\"x\":112,\"y\":37},{\"x\":34,\"y\":113}]"
+    },
+    {
+      "t": "21.3",
+      "l": "L",
+      "m": "[EPD] ✅ validate: HTTP 200 | isValid=true | token=zc_ia4IMJfimyGH... | answer=(338,19) (439,99) (110,188) (112,37) (34,113)"
+    },
+    {
+      "t": "21.4",
+      "l": "L",
+      "m": "[EPD ML:collect] a7c1261f-867a-434d-8b03-987614b73682 valid=true"
+    },
+    {
+      "t": "21.4",
+      "l": "L",
+      "m": "[EPD LABEL] validate: true"
+    },
+    {
+      "t": "23.1",
+      "l": "L",
+      "m": "[EPD] 🏢 Create params: 93c9939a-2182-4e78-98b4-0cf314b09cfa 5e21ddaf-6bab-4173-8600-20e7a9ff6d87 1"
+    },
+    {
+      "t": "23.2",
+      "l": "L",
+      "m": "[EPD] ♻️ Intercepted slots, status: 200 (WAF: 2/16)"
+    },
+    {
+      "t": "23.2",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha REQUEST: {\"payload\":{\"reservationId\":\"4a49b4ca-332d-4c6e-980d-94492332ad3e\",\"facilityId\":\"93c9939a-2182-4e78-98b4-0cf314b09cfa\",\"timeSlotData\":\"2026-06-10T14:00:00.000Z\",\"encryptedTso\":null}}"
+    },
+    {
+      "t": "24.4",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha RESPONSE status: 200 type: 1 tiles: undefined variants: undefined hasImage: true hasIcons: true token: zc_79oXdclCl396VhRqN"
+    },
+    {
+      "t": "24.4",
+      "l": "L",
+      "m": "[EPD] ⚡ NEW CAPTCHA TYPE: click-based (image + icons → coordinates)"
+    },
+    {
+      "t": "27.6",
+      "l": "L",
+      "m": "[EPD LABEL] point 1 {\"x\":260,\"y\":166}"
+    },
+    {
+      "t": "29.4",
+      "l": "L",
+      "m": "[EPD LABEL] point 2 {\"x\":195,\"y\":33}"
+    },
+    {
+      "t": "31.3",
+      "l": "L",
+      "m": "[EPD LABEL] point 3 {\"x\":200,\"y\":200}"
+    },
+    {
+      "t": "33.1",
+      "l": "L",
+      "m": "[EPD LABEL] point 4 {\"x\":261,\"y\":23}"
+    },
+    {
+      "t": "34.8",
+      "l": "L",
+      "m": "[EPD LABEL] point 5 {\"x\":192,\"y\":121}"
+    },
+    {
+      "t": "36.0",
+      "l": "L",
+      "m": "[EPD ML:collect] labeled 7974dd46-4f6f-4846-b882-68c168b8f353 valid=true (5 pts, 45 total)"
+    },
+    {
+      "t": "36.0",
+      "l": "L",
+      "m": "[EPD LABEL] saved 7974dd46-4f6f-4846-b882-68c168b8f353 [{\"x\":260,\"y\":166},{\"x\":195,\"y\":33},{\"x\":200,\"y\":200},{\"x\":261,\"y\":23},{\"x\":192,\"y\":121}]"
+    },
+    {
+      "t": "36.1",
+      "l": "L",
+      "m": "[EPD] ✅ validate: HTTP 200 | isValid=true | token=zc_79oXdclCl396... | answer=(260,166) (195,33) (200,200) (261,23) (192,121)"
+    },
+    {
+      "t": "36.2",
+      "l": "L",
+      "m": "[EPD ML:collect] 7974dd46-4f6f-4846-b882-68c168b8f353 valid=true"
+    },
+    {
+      "t": "36.2",
+      "l": "L",
+      "m": "[EPD LABEL] validate: true"
+    },
+    {
+      "t": "37.6",
+      "l": "L",
+      "m": "[EPD] 🏢 Create params: 93c9939a-2182-4e78-98b4-0cf314b09cfa 5e21ddaf-6bab-4173-8600-20e7a9ff6d87 1"
+    },
+    {
+      "t": "37.7",
+      "l": "L",
+      "m": "[EPD] ♻️ Intercepted slots, status: 200 (WAF: 3/16)"
+    },
+    {
+      "t": "37.7",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha REQUEST: {\"payload\":{\"reservationId\":\"4a49b4ca-332d-4c6e-980d-94492332ad3e\",\"facilityId\":\"93c9939a-2182-4e78-98b4-0cf314b09cfa\",\"timeSlotData\":\"2026-06-10T14:00:00.000Z\",\"encryptedTso\":null}}"
+    },
+    {
+      "t": "37.9",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha RESPONSE status: 200 type: 1 tiles: undefined variants: undefined hasImage: true hasIcons: true token: zc_E6OXcBFxMUbZItYac"
+    },
+    {
+      "t": "37.9",
+      "l": "L",
+      "m": "[EPD] ⚡ NEW CAPTCHA TYPE: click-based (image + icons → coordinates)"
+    },
+    {
+      "t": "40.5",
+      "l": "L",
+      "m": "[EPD LABEL] point 1 {\"x\":378,\"y\":122}"
+    },
+    {
+      "t": "43.1",
+      "l": "L",
+      "m": "[EPD LABEL] point 2 {\"x\":124,\"y\":110}"
+    },
+    {
+      "t": "44.9",
+      "l": "L",
+      "m": "[EPD LABEL] point 3 {\"x\":266,\"y\":199}"
+    },
+    {
+      "t": "47.5",
+      "l": "L",
+      "m": "[EPD LABEL] point 4 {\"x\":264,\"y\":29}"
+    },
+    {
+      "t": "49.3",
+      "l": "L",
+      "m": "[EPD LABEL] point 5 {\"x\":178,\"y\":35}"
+    },
+    {
+      "t": "50.5",
+      "l": "L",
+      "m": "[EPD ML:collect] labeled ef522afa-9578-4d34-a6a7-42050b32abb5 valid=true (5 pts, 46 total)"
+    },
+    {
+      "t": "50.5",
+      "l": "L",
+      "m": "[EPD LABEL] saved ef522afa-9578-4d34-a6a7-42050b32abb5 [{\"x\":378,\"y\":122},{\"x\":124,\"y\":110},{\"x\":266,\"y\":199},{\"x\":264,\"y\":29},{\"x\":178,\"y\":35}]"
+    },
+    {
+      "t": "50.6",
+      "l": "L",
+      "m": "[EPD] ✅ validate: HTTP 200 | isValid=true | token=zc_E6OXcBFxMUbZ... | answer=(378,122) (124,110) (266,199) (264,29) (178,35)"
+    },
+    {
+      "t": "50.7",
+      "l": "L",
+      "m": "[EPD ML:collect] ef522afa-9578-4d34-a6a7-42050b32abb5 valid=true"
+    },
+    {
+      "t": "50.7",
+      "l": "L",
+      "m": "[EPD LABEL] validate: true"
+    },
+    {
+      "t": "52.6",
+      "l": "L",
+      "m": "[EPD] 🏢 Create params: 93c9939a-2182-4e78-98b4-0cf314b09cfa 5e21ddaf-6bab-4173-8600-20e7a9ff6d87 1"
+    },
+    {
+      "t": "52.7",
+      "l": "L",
+      "m": "[EPD] ♻️ Intercepted slots, status: 200 (WAF: 4/16)"
+    },
+    {
+      "t": "52.7",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha REQUEST: {\"payload\":{\"reservationId\":\"4a49b4ca-332d-4c6e-980d-94492332ad3e\",\"facilityId\":\"93c9939a-2182-4e78-98b4-0cf314b09cfa\",\"timeSlotData\":\"2026-06-10T14:00:00.000Z\",\"encryptedTso\":null}}"
+    },
+    {
+      "t": "52.9",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha RESPONSE status: 200 type: 1 tiles: undefined variants: undefined hasImage: true hasIcons: true token: zc_eSvYWZGJrTqyC6Knv"
+    },
+    {
+      "t": "52.9",
+      "l": "L",
+      "m": "[EPD] ⚡ NEW CAPTCHA TYPE: click-based (image + icons → coordinates)"
+    },
+    {
+      "t": "56.7",
+      "l": "L",
+      "m": "[EPD LABEL] point 1 {\"x\":348,\"y\":98}"
+    },
+    {
+      "t": "59.2",
+      "l": "L",
+      "m": "[EPD LABEL] point 2 {\"x\":368,\"y\":195}"
+    },
+    {
+      "t": "61.5",
+      "l": "L",
+      "m": "[EPD LABEL] point 3 {\"x\":213,\"y\":121}"
+    },
+    {
+      "t": "63.3",
+      "l": "L",
+      "m": "[EPD LABEL] point 4 {\"x\":290,\"y\":39}"
+    },
+    {
+      "t": "65.1",
+      "l": "L",
+      "m": "[EPD LABEL] point 5 {\"x\":28,\"y\":32}"
+    },
+    {
+      "t": "66.1",
+      "l": "L",
+      "m": "[EPD ML:collect] labeled 81043dd9-26ef-4e58-b1c9-f1a37a98af0e valid=true (5 pts, 47 total)"
+    },
+    {
+      "t": "66.1",
+      "l": "L",
+      "m": "[EPD LABEL] saved 81043dd9-26ef-4e58-b1c9-f1a37a98af0e [{\"x\":348,\"y\":98},{\"x\":368,\"y\":195},{\"x\":213,\"y\":121},{\"x\":290,\"y\":39},{\"x\":28,\"y\":32}]"
+    },
+    {
+      "t": "66.3",
+      "l": "L",
+      "m": "[EPD] ✅ validate: HTTP 200 | isValid=true | token=zc_eSvYWZGJrTqy... | answer=(348,98) (368,195) (213,121) (290,39) (28,32)"
+    },
+    {
+      "t": "66.4",
+      "l": "L",
+      "m": "[EPD ML:collect] 81043dd9-26ef-4e58-b1c9-f1a37a98af0e valid=true"
+    },
+    {
+      "t": "66.4",
+      "l": "L",
+      "m": "[EPD LABEL] validate: true"
+    },
+    {
+      "t": "67.7",
+      "l": "L",
+      "m": "[EPD] 🏢 Create params: 93c9939a-2182-4e78-98b4-0cf314b09cfa 5e21ddaf-6bab-4173-8600-20e7a9ff6d87 1"
+    },
+    {
+      "t": "67.9",
+      "l": "L",
+      "m": "[EPD WAF] Counter: 5/16 in window"
+    },
+    {
+      "t": "67.9",
+      "l": "L",
+      "m": "[EPD] ♻️ Intercepted slots, status: 200 (WAF: 5/16)"
+    },
+    {
+      "t": "67.9",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha REQUEST: {\"payload\":{\"reservationId\":\"4a49b4ca-332d-4c6e-980d-94492332ad3e\",\"facilityId\":\"93c9939a-2182-4e78-98b4-0cf314b09cfa\",\"timeSlotData\":\"2026-06-10T14:00:00.000Z\",\"encryptedTso\":null}}"
+    },
+    {
+      "t": "67.9",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha RESPONSE status: 200 type: 1 tiles: undefined variants: undefined hasImage: true hasIcons: true token: zc_fiy9P65XGlHSIAG6t"
+    },
+    {
+      "t": "67.9",
+      "l": "L",
+      "m": "[EPD] ⚡ NEW CAPTCHA TYPE: click-based (image + icons → coordinates)"
+    },
+    {
+      "t": "70.5",
+      "l": "L",
+      "m": "[EPD LABEL] point 1 {\"x\":34,\"y\":189}"
+    },
+    {
+      "t": "73.0",
+      "l": "L",
+      "m": "[EPD LABEL] point 2 {\"x\":444,\"y\":221}"
+    },
+    {
+      "t": "74.8",
+      "l": "L",
+      "m": "[EPD LABEL] point 3 {\"x\":116,\"y\":111}"
+    },
+    {
+      "t": "77.3",
+      "l": "L",
+      "m": "[EPD LABEL] point 4 {\"x\":42,\"y\":100}"
+    },
+    {
+      "t": "79.3",
+      "l": "L",
+      "m": "[EPD LABEL] point 5 {\"x\":271,\"y\":190}"
+    },
+    {
+      "t": "80.2",
+      "l": "L",
+      "m": "[EPD ML:collect] labeled a7267b20-6f31-4cf7-b5fc-4736db3af7f4 valid=true (5 pts, 48 total)"
+    },
+    {
+      "t": "80.2",
+      "l": "L",
+      "m": "[EPD LABEL] saved a7267b20-6f31-4cf7-b5fc-4736db3af7f4 [{\"x\":34,\"y\":189},{\"x\":444,\"y\":221},{\"x\":116,\"y\":111},{\"x\":42,\"y\":100},{\"x\":271,\"y\":190}]"
+    },
+    {
+      "t": "80.3",
+      "l": "L",
+      "m": "[EPD] ✅ validate: HTTP 200 | isValid=true | token=zc_fiy9P65XGlHS... | answer=(34,189) (444,221) (116,111) (42,100) (271,190)"
+    },
+    {
+      "t": "80.4",
+      "l": "L",
+      "m": "[EPD ML:collect] a7267b20-6f31-4cf7-b5fc-4736db3af7f4 valid=true"
+    },
+    {
+      "t": "80.4",
+      "l": "L",
+      "m": "[EPD LABEL] validate: true"
+    },
+    {
+      "t": "82.3",
+      "l": "L",
+      "m": "[EPD] 🏢 Create params: 93c9939a-2182-4e78-98b4-0cf314b09cfa 5e21ddaf-6bab-4173-8600-20e7a9ff6d87 1"
+    },
+    {
+      "t": "82.4",
+      "l": "L",
+      "m": "[EPD] ♻️ Intercepted slots, status: 200 (WAF: 6/16)"
+    },
+    {
+      "t": "82.5",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha REQUEST: {\"payload\":{\"reservationId\":\"4a49b4ca-332d-4c6e-980d-94492332ad3e\",\"facilityId\":\"93c9939a-2182-4e78-98b4-0cf314b09cfa\",\"timeSlotData\":\"2026-06-10T14:00:00.000Z\",\"encryptedTso\":null}}"
+    },
+    {
+      "t": "82.6",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha RESPONSE status: 200 type: 1 tiles: undefined variants: undefined hasImage: true hasIcons: true token: zc_aDT2JZT-8u3_b_ZBg"
+    },
+    {
+      "t": "82.6",
+      "l": "L",
+      "m": "[EPD] ⚡ NEW CAPTCHA TYPE: click-based (image + icons → coordinates)"
+    },
+    {
+      "t": "85.3",
+      "l": "L",
+      "m": "[EPD LABEL] point 1 {\"x\":342,\"y\":109}"
+    },
+    {
+      "t": "89.8",
+      "l": "L",
+      "m": "[EPD LABEL] point 2 {\"x\":346,\"y\":189}"
+    },
+    {
+      "t": "92.3",
+      "l": "L",
+      "m": "[EPD LABEL] point 3 {\"x\":260,\"y\":24}"
+    },
+    {
+      "t": "95.5",
+      "l": "L",
+      "m": "[EPD LABEL] point 4 {\"x\":263,\"y\":194}"
+    },
+    {
+      "t": "98.1",
+      "l": "L",
+      "m": "[EPD LABEL] point 5 {\"x\":176,\"y\":173}"
+    },
+    {
+      "t": "99.3",
+      "l": "L",
+      "m": "[EPD ML:collect] labeled 611813c0-9cc8-4714-9c3c-be424840607a valid=true (5 pts, 49 total)"
+    },
+    {
+      "t": "99.3",
+      "l": "L",
+      "m": "[EPD LABEL] saved 611813c0-9cc8-4714-9c3c-be424840607a [{\"x\":342,\"y\":109},{\"x\":346,\"y\":189},{\"x\":260,\"y\":24},{\"x\":263,\"y\":194},{\"x\":176,\"y\":173}]"
+    },
+    {
+      "t": "99.4",
+      "l": "L",
+      "m": "[EPD] ✅ validate: HTTP 200 | isValid=true | token=zc_aDT2JZT-8u3_... | answer=(342,109) (346,189) (260,24) (263,194) (176,173)"
+    },
+    {
+      "t": "99.5",
+      "l": "L",
+      "m": "[EPD ML:collect] 611813c0-9cc8-4714-9c3c-be424840607a valid=true"
+    },
+    {
+      "t": "99.5",
+      "l": "L",
+      "m": "[EPD LABEL] validate: true"
+    },
+    {
+      "t": "101.1",
+      "l": "L",
+      "m": "[EPD] 🏢 Create params: 93c9939a-2182-4e78-98b4-0cf314b09cfa 5e21ddaf-6bab-4173-8600-20e7a9ff6d87 1"
+    },
+    {
+      "t": "101.2",
+      "l": "L",
+      "m": "[EPD] ♻️ Intercepted slots, status: 200 (WAF: 7/16)"
+    },
+    {
+      "t": "101.2",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha REQUEST: {\"payload\":{\"reservationId\":\"4a49b4ca-332d-4c6e-980d-94492332ad3e\",\"facilityId\":\"93c9939a-2182-4e78-98b4-0cf314b09cfa\",\"timeSlotData\":\"2026-06-10T14:00:00.000Z\",\"encryptedTso\":null}}"
+    },
+    {
+      "t": "101.4",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha RESPONSE status: 200 type: 1 tiles: undefined variants: undefined hasImage: true hasIcons: true token: zc_FOw1JPVJTRv37Am4R"
+    },
+    {
+      "t": "101.4",
+      "l": "L",
+      "m": "[EPD] ⚡ NEW CAPTCHA TYPE: click-based (image + icons → coordinates)"
+    },
+    {
+      "t": "103.9",
+      "l": "L",
+      "m": "[EPD LABEL] point 1 {\"x\":427,\"y\":43}"
+    },
+    {
+      "t": "106.1",
+      "l": "L",
+      "m": "[EPD LABEL] point 2 {\"x\":178,\"y\":111}"
+    },
+    {
+      "t": "108.1",
+      "l": "L",
+      "m": "[EPD LABEL] point 3 {\"x\":114,\"y\":174}"
+    },
+    {
+      "t": "110.7",
+      "l": "L",
+      "m": "[EPD LABEL] point 4 {\"x\":278,\"y\":134}"
+    },
+    {
+      "t": "111.6",
+      "l": "L",
+      "m": "[EPD LABEL] point 5 {\"x\":43,\"y\":39}"
+    },
+    {
+      "t": "112.7",
+      "l": "L",
+      "m": "[EPD ML:collect] labeled 578d306c-c835-4964-948c-e7f57d859f61 valid=true (5 pts, 50 total)"
+    },
+    {
+      "t": "112.7",
+      "l": "L",
+      "m": "[EPD LABEL] saved 578d306c-c835-4964-948c-e7f57d859f61 [{\"x\":427,\"y\":43},{\"x\":178,\"y\":111},{\"x\":114,\"y\":174},{\"x\":278,\"y\":134},{\"x\":43,\"y\":39}]"
+    },
+    {
+      "t": "112.8",
+      "l": "L",
+      "m": "[EPD] ✅ validate: HTTP 200 | isValid=true | token=zc_FOw1JPVJTRv3... | answer=(427,43) (178,111) (114,174) (278,134) (43,39)"
+    },
+    {
+      "t": "112.9",
+      "l": "L",
+      "m": "[EPD ML:collect] 578d306c-c835-4964-948c-e7f57d859f61 valid=true"
+    },
+    {
+      "t": "112.9",
+      "l": "L",
+      "m": "[EPD LABEL] validate: true"
+    },
+    {
+      "t": "114.6",
+      "l": "L",
+      "m": "[EPD] 🏢 Create params: 93c9939a-2182-4e78-98b4-0cf314b09cfa 5e21ddaf-6bab-4173-8600-20e7a9ff6d87 1"
+    },
+    {
+      "t": "114.7",
+      "l": "L",
+      "m": "[EPD] ♻️ Intercepted slots, status: 200 (WAF: 8/16)"
+    },
+    {
+      "t": "114.7",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha REQUEST: {\"payload\":{\"reservationId\":\"4a49b4ca-332d-4c6e-980d-94492332ad3e\",\"facilityId\":\"93c9939a-2182-4e78-98b4-0cf314b09cfa\",\"timeSlotData\":\"2026-06-10T14:00:00.000Z\",\"encryptedTso\":null}}"
+    },
+    {
+      "t": "114.9",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha RESPONSE status: 200 type: 1 tiles: undefined variants: undefined hasImage: true hasIcons: true token: zc_MURL3aPyGU1Dm8HeE"
+    },
+    {
+      "t": "114.9",
+      "l": "L",
+      "m": "[EPD] ⚡ NEW CAPTCHA TYPE: click-based (image + icons → coordinates)"
+    },
+    {
+      "t": "117.9",
+      "l": "L",
+      "m": "[EPD LABEL] point 1 {\"x\":211,\"y\":204}"
+    },
+    {
+      "t": "120.2",
+      "l": "L",
+      "m": "[EPD LABEL] point 2 {\"x\":438,\"y\":188}"
+    },
+    {
+      "t": "123.6",
+      "l": "L",
+      "m": "[EPD LABEL] point 3 {\"x\":262,\"y\":32}"
+    },
+    {
+      "t": "124.9",
+      "l": "L",
+      "m": "[EPD LABEL] point 4 {\"x\":345,\"y\":104}"
+    },
+    {
+      "t": "126.0",
+      "l": "L",
+      "m": "[EPD LABEL] point 5 {\"x\":347,\"y\":41}"
+    },
+    {
+      "t": "127.6",
+      "l": "L",
+      "m": "[EPD ML:collect] labeled ec1ebdc2-54b2-4b5d-8eb0-920a2b929b06 valid=true (5 pts, 51 total)"
+    },
+    {
+      "t": "127.6",
+      "l": "L",
+      "m": "[EPD LABEL] saved ec1ebdc2-54b2-4b5d-8eb0-920a2b929b06 [{\"x\":211,\"y\":204},{\"x\":438,\"y\":188},{\"x\":262,\"y\":32},{\"x\":345,\"y\":104},{\"x\":347,\"y\":41}]"
+    },
+    {
+      "t": "127.7",
+      "l": "L",
+      "m": "[EPD] ✅ validate: HTTP 200 | isValid=true | token=zc_MURL3aPyGU1D... | answer=(211,204) (438,188) (262,32) (345,104) (347,41)"
+    },
+    {
+      "t": "127.8",
+      "l": "L",
+      "m": "[EPD ML:collect] ec1ebdc2-54b2-4b5d-8eb0-920a2b929b06 valid=true"
+    },
+    {
+      "t": "127.8",
+      "l": "L",
+      "m": "[EPD LABEL] validate: true"
+    },
+    {
+      "t": "128.8",
+      "l": "L",
+      "m": "[EPD] 🏢 Create params: 93c9939a-2182-4e78-98b4-0cf314b09cfa 5e21ddaf-6bab-4173-8600-20e7a9ff6d87 1"
+    },
+    {
+      "t": "129.0",
+      "l": "L",
+      "m": "[EPD] ♻️ Intercepted slots, status: 200 (WAF: 9/16)"
+    },
+    {
+      "t": "129.0",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha REQUEST: {\"payload\":{\"reservationId\":\"4a49b4ca-332d-4c6e-980d-94492332ad3e\",\"facilityId\":\"93c9939a-2182-4e78-98b4-0cf314b09cfa\",\"timeSlotData\":\"2026-06-10T14:00:00.000Z\",\"encryptedTso\":null}}"
+    },
+    {
+      "t": "129.2",
+      "l": "L",
+      "m": "[EPD] fetchCaptcha RESPONSE status: 200 type: 1 tiles: undefined variants: undefined hasImage: true hasIcons: true token: zc_8UARPO7SOgWDBlVZu"
+    },
+    {
+      "t": "129.2",
+      "l": "L",
+      "m": "[EPD] ⚡ NEW CAPTCHA TYPE: click-based (image + icons → coordinates)"
+    },
+    {
+      "t": "132.6",
+      "l": "L",
+      "m": "[EPD LABEL] point 1 {\"x\":266,\"y\":111}"
+    },
+    {
+      "t": "134.5",
+      "l": "L",
+      "m": "[EPD LABEL] point 2 {\"x\":438,\"y\":190}"
+    },
+    {
+      "t": "136.4",
+      "l": "L",
+      "m": "[EPD LABEL] point 3 {\"x\":344,\"y\":106}"
+    },
+    {
+      "t": "138.5",
+      "l": "L",
+      "m": "[EPD LABEL] point 4 {\"x\":205,\"y\":52}"
+    },
+    {
+      "t": "139.9",
+      "l": "L",
+      "m": "[EPD LABEL] point 5 {\"x\":117,\"y\":42}"
+    },
+    {
+      "t": "141.3",
+      "l": "L",
+      "m": "[EPD ML:collect] labeled 19fb6c17-914d-416d-9ae7-456a8d880f7d valid=true (5 pts, 52 total)"
+    },
+    {
+      "t": "141.3",
+      "l": "L",
+      "m": "[EPD LABEL] saved 19fb6c17-914d-416d-9ae7-456a8d880f7d [{\"x\":266,\"y\":111},{\"x\":438,\"y\":190},{\"x\":344,\"y\":106},{\"x\":205,\"y\":52},{\"x\":117,\"y\":42}]"
+    },
+    {
+      "t": "141.4",
+      "l": "L",
+      "m": "[EPD] ✅ validate: HTTP 200 | isValid=true | token=zc_8UARPO7SOgWD... | answer=(266,111) (438,190) (344,106) (205,52) (117,42)"
+    },
+    {
+      "t": "141.5",
+      "l": "L",
+      "m": "[EPD ML:collect] 19fb6c17-914d-416d-9ae7-456a8d880f7d valid=true"
+    },
+    {
+      "t": "141.5",
+      "l": "L",
+      "m": "[EPD LABEL] validate: true"
+    }
+  ]
+}

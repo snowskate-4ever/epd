@@ -449,8 +449,9 @@ function _buildAnalytics() {
       lastTestOutcome = "ok";
       testActive = false;
     }
-    if (m.includes("validate: HTTP 200") || m.includes("isValid=true")) validateOK++;
-    if (m.includes("validate: HTTP 400")) validateFail++;
+    if (m.includes("[EPD] ✅ validate:")) validateOK++;
+    if (m.includes("[EPD] ❌ validate:")) validateFail++;
+    if (m.includes("validate: HTTP 400") && !m.includes("[EPD] ❌ validate:")) validateFail++;
     if (m.includes("validate: HTTP 500")) validate500++;
     if (m.includes("Ответ капчи не верный")) captchaFail++;
     if (m.includes("CAPTCHA PASSED") || m.includes("РЕШЕНА")) captchaSuccess++;
@@ -502,7 +503,11 @@ function _buildAnalytics() {
     if (p > 0 && c === 0) parts.push(`Тип капчи: puzzle (${p}×).`);
     else if (c > 0 && p === 0) parts.push(`Тип капчи: click (${c}×).`);
     else if (p > 0 && c > 0) parts.push(`Тип капчи: puzzle ${p}× + click ${c}×.`);
-    parts.push(`Капч запрошено: ${captchaRequests}, решено: ${captchaSuccess}, провалено: ${captchaFail}.`);
+    if (testRuns > 0 && slotsChecks === 0) {
+      parts.push(`Тест капчи: ${testRuns} прогон(ов), validate OK: ${testValidateOk}, fail: ${testValidateFail}.`);
+    } else {
+      parts.push(`Капч запрошено: ${captchaRequests}, решено: ${captchaSuccess}, провалено: ${captchaFail}.`);
+    }
   }
   if (aiCalls > 0) parts.push(`AI вызовов: ${aiCalls} (успех: ${aiSuccess}), среднее время: ${a.stats.ai_avg_ms}мс, потрачено: ${totalAiCost.toFixed(2)}₽.`);
   if (validate500 > 0) parts.push(`⚠️ HTTP 500 ошибок: ${validate500} (сервер не принял формат ответа).`);

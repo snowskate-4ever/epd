@@ -166,7 +166,7 @@ async function _epdUploadLogs(tag = "manual", opts = {}) {
   if (opts.statusMessage) report.status_message = opts.statusMessage;
   if (opts.testOutcome) {
     report.test_outcome = opts.testOutcome;
-    _epdPatchTestOutcomeReport(report, opts.testOutcome);
+    if (report.analytics?.stats) report.analytics.stats.last_test_outcome = opts.testOutcome;
   }
   const token = opts.promptForToken
     ? await _epdEnsureLogUploadToken()
@@ -206,9 +206,11 @@ async function _epdUploadLogsAfter(tag, extra = {}) {
   return _epdUploadLogs(tag, { promptForToken: false, ...extra });
 }
 
-async function _epdStatusUpload(statusFn, tag, msg) {
-  const testOutcome = /✅/.test(msg) && /тест/i.test(msg) ? "ok"
-    : /❌/.test(msg) && /тест/i.test(msg) ? "fail" : null;
+async function _epdStatusUpload(statusFn, tag, msg, outcome = null) {
+  const testOutcome = outcome ?? (
+    /✅/.test(msg) && /тест/i.test(msg) ? "ok"
+      : /❌/.test(msg) && /тест/i.test(msg) ? "fail" : null
+  );
   const r = await _epdUploadLogsAfter(tag, { statusMessage: msg, testOutcome });
   statusFn(msg + _epdUploadSuffix(r));
   return r;
@@ -367,7 +369,8 @@ function _buildAnalytics() {
   let validateOK = 0, validateFail = 0, validate500 = 0;
   let testValidateOk = 0, testValidateFail = 0, testRuns = 0;
   let testActive = false;
-  let testOutcomeRecorded = false;
+  let testSegmentOpen = false;
+  let lastTestOutcome = null;
   let tokenExpired = 0;
   let totalAiMs = 0, totalAiCost = 0;
   const aiModels = {};
@@ -421,23 +424,29 @@ function _buildAnalytics() {
     if (m.includes("[EPD TEST] slot:") || m.includes("[EPD TEST ML] slot:")) {
       testRuns++;
       testActive = true;
+      testSegmentOpen = true;
     }
     if (m.includes("[EPD TEST] validate: ✅") || m.includes("[EPD TEST ML] validate: ✅")) {
-      if (!testOutcomeRecorded) { testValidateOk++; testOutcomeRecorded = true; }
+      if (testSegmentOpen) testValidateOk++;
+      testSegmentOpen = false;
+      lastTestOutcome = "ok";
       testActive = false;
     }
     if (m.includes("[EPD TEST] validate: ❌ TOP-5 failed")
       || m.includes("[EPD TEST] validate: token expired")
       || m.includes("[EPD TEST ML] validate: ❌")
       || m.includes("[EPD TEST ML] validate: token expired")) {
-      if (!testOutcomeRecorded) { testValidateFail++; testOutcomeRecorded = true; }
+      if (testSegmentOpen) testValidateFail++;
+      testSegmentOpen = false;
+      lastTestOutcome = "fail";
       testActive = false;
     }
-    // validateCaptcha() пишет [EPD] ✅ validate до строки [EPD TEST] validate (если upload раньше log)
-    if (testActive && !testOutcomeRecorded
+    // validateCaptcha() может записать [EPD] ✅ validate до строки [EPD TEST] validate
+    if (testActive && testSegmentOpen
       && m.includes("[EPD] ✅ validate:") && m.includes("isValid=true")) {
       testValidateOk++;
-      testOutcomeRecorded = true;
+      testSegmentOpen = false;
+      lastTestOutcome = "ok";
       testActive = false;
     }
     if (m.includes("validate: HTTP 200") || m.includes("isValid=true")) validateOK++;
@@ -480,6 +489,7 @@ function _buildAnalytics() {
     test_runs: testRuns,
     test_validate_ok: testValidateOk,
     test_validate_fail: testValidateFail,
+    last_test_outcome: lastTestOutcome,
   };
 
   // Build summary
@@ -593,38 +603,6 @@ function _buildAnalytics() {
   }
 
   return a;
-}
-
-/** Синхронизировать analytics с явным исходом теста (status UI vs stats). */
-function _epdPatchTestOutcomeReport(report, testOutcome) {
-  if (!testOutcome || !report?.analytics?.stats) return;
-  const s = report.analytics.stats;
-  const a = report.analytics;
-  const kind = s.captcha_kind || "puzzle";
-  if (testOutcome === "ok") {
-    s.test_validate_ok = Math.max(s.test_validate_ok || 0, 1);
-    if (s.test_validate_fail > 0 && s.test_validate_ok > 0) s.test_validate_fail = 0;
-    const okRec = kind === "click"
-      ? "✅ Click-тест: координаты приняты сервером (перезапись не выполнялась)."
-      : "✅ Puzzle-тест: вариант EdgeMatch принят сервером (перезапись не выполнялась).";
-    a.recommendations = (a.recommendations || []).filter(
-      (r) => !/Тест solvers без validate|тест.*не прошёл|отклонены/i.test(r),
-    );
-    if (!a.recommendations.some((r) => /Puzzle-тест:.*принят|Click-тест:.*принят/i.test(r))) {
-      a.recommendations.unshift(okRec);
-    }
-  } else if (testOutcome === "fail") {
-    s.test_validate_fail = Math.max(s.test_validate_fail || 0, 1);
-    const failRec = kind === "click"
-      ? "❌ Click-тест: координаты отклонены — проверьте NCC/ML или разметку."
-      : "❌ Puzzle-тест: EdgeMatch TOP-5 не прошёл validate — в «Старт» подключится AI/RuCaptcha.";
-    a.recommendations = (a.recommendations || []).filter(
-      (r) => !/Тест solvers без validate/i.test(r),
-    );
-    if (!a.recommendations.some((r) => /тест.*отклонен|не прошёл validate/i.test(r))) {
-      a.recommendations.unshift(failRec);
-    }
-  }
 }
 
 const RESCHEDULE_RE =
@@ -5134,7 +5112,6 @@ function buildUI(container) {
       <button id="epd2-test"  class="epd2-btn" style="background:#555;margin-top:4px">Тест капчи</button>
       <button id="epd2-preview" class="epd2-btn" style="background:#1565c0;margin-top:4px">👁 Показать капчу</button>
       <button id="epd2-logs" class="epd2-btn" style="background:#333;margin-top:4px;font-size:11px">📋 Скачать логи</button>
-      <button id="epd2-upload-logs" class="epd2-btn" style="background:#1b5e20;margin-top:4px;font-size:11px">📤 Отправить логи → smrtcrm</button>
     </div>
     <div id="epd2-captcha-overlay" class="epd2-captcha-overlay" style="display:none">
       <div id="epd2-captcha-box" class="epd2-captcha-box">
@@ -5232,15 +5209,6 @@ function attachLogic(root, reservationUuid) {
   $("#epd2-test").addEventListener("click", testCaptcha);
   $("#epd2-preview").addEventListener("click", previewCaptcha);
   $("#epd2-logs").addEventListener("click", () => _epdDownloadLogs("manual"));
-  $("#epd2-upload-logs").addEventListener("click", async () => {
-    status("Отправка логов на smrtcrm.ru…");
-    const r = await _epdUploadLogs("manual", { promptForToken: true });
-    if (r.ok) {
-      status(`✅ Логи на smrtcrm${r.id ? ` #${r.id}` : ""}`);
-    } else {
-      status(`❌ Логи: ${r.error || r.status || "ошибка"}`);
-    }
-  });
   labelSave.addEventListener("click", () => _labelSave(false));
   labelValidate.addEventListener("click", () => _labelSave(true));
   labelUndo.addEventListener("click", _labelUndo);
@@ -5994,7 +5962,7 @@ function attachLogic(root, reservationUuid) {
           await window.EPD_ML_COLLECT.updateOutcome(mlCollectId, false, { coords: null, method: solveMeta?.method });
         }
         testInProgress = false;
-        await _epdStatusUpload(status, "test", "Тест: solvers не вернули координаты");
+        await _epdStatusUpload(status, "test", "Тест: solvers не вернули координаты", "fail");
       }
       return;
     }
@@ -6024,24 +5992,24 @@ function attachLogic(root, reservationUuid) {
         const totalMs = Date.now() - testT0;
         testInProgress = false;
         console.log(`[EPD TEST] validate: ✅ isValid=true | cache variant ${ranked[0].idx + 1} | ${totalMs}мс total`);
-        await _epdStatusUpload(status, "test-puzzle", `✅ Тест: кэш OK! ${totalMs}мс (validate ${vMs}мс)`);
+        await _epdStatusUpload(status, "test-puzzle", `✅ Тест: кэш OK! ${totalMs}мс (validate ${vMs}мс)`, "ok");
       } else if (ok?.tokenExpired) {
         const totalMs = Date.now() - testT0;
         testInProgress = false;
         console.log("[EPD TEST] validate: token expired");
-        await _epdStatusUpload(status, "test-puzzle", `Тест: токен сгорел (${totalMs}мс)`);
+        await _epdStatusUpload(status, "test-puzzle", `Тест: токен сгорел (${totalMs}мс)`, "fail");
       } else {
         const totalMs = Date.now() - testT0;
         testInProgress = false;
         console.log(`[EPD TEST] validate: ❌ cache miss on server | ${totalMs}мс total`);
-        await _epdStatusUpload(status, "test-puzzle", `❌ Тест: кэш не прошёл validate (${totalMs}мс)`);
+        await _epdStatusUpload(status, "test-puzzle", `❌ Тест: кэш не прошёл validate (${totalMs}мс)`, "fail");
       }
       return;
     }
 
     if (!ranked.length) {
       testInProgress = false;
-      await _epdStatusUpload(status, "test-puzzle", "Тест: EdgeMatch не дал вариантов");
+      await _epdStatusUpload(status, "test-puzzle", "Тест: EdgeMatch не дал вариантов", "fail");
       return;
     }
 
@@ -6072,6 +6040,7 @@ function attachLogic(root, reservationUuid) {
           status,
           "test-puzzle",
           `✅ Тест OK! вариант ${c.idx + 1}, ${totalMs}мс (EM ${edgeMs}мс + v ${vMs}мс)`,
+          "ok",
         );
         return;
       }
@@ -6079,7 +6048,7 @@ function attachLogic(root, reservationUuid) {
         const totalMs = Date.now() - testT0;
         testInProgress = false;
         console.log(`[EPD TEST] validate: token expired | ${totalMs}мс total`);
-        await _epdStatusUpload(status, "test-puzzle", `Тест: токен сгорел на ${attempt + 1}/${maxTries} (${totalMs}мс)`);
+        await _epdStatusUpload(status, "test-puzzle", `Тест: токен сгорел на ${attempt + 1}/${maxTries} (${totalMs}мс)`, "fail");
         return;
       }
       console.log(`[EPD TEST] validate: ❌ variant ${c.idx + 1} (${vMs}мс)`);
@@ -6095,6 +6064,7 @@ function attachLogic(root, reservationUuid) {
       status,
       "test-puzzle",
       `❌ Тест: TOP-5 не угадали, ${totalMs}мс (EM ${edgeMs}мс)`,
+      "fail",
     );
   }
 
@@ -6650,7 +6620,6 @@ function _buildCreateUI(container) {
       <button id="epd2c-start" style="width:100%;padding:7px;border-radius:5px;border:none;background:#2ecc71;color:#fff;font-weight:700;cursor:pointer">▶ Старт</button>
       <button id="epd2c-stop"  style="width:100%;padding:7px;border-radius:5px;border:none;background:#e74c3c;color:#fff;font-weight:700;cursor:pointer;display:none">⏹ Стоп</button>
       <button id="epd2c-logs" style="width:100%;padding:5px;border-radius:4px;border:1px solid #555;background:#2a2a40;color:#aaa;font-size:11px;cursor:pointer;margin-top:6px">📋 Скачать логи</button>
-      <button id="epd2c-upload-logs" style="width:100%;padding:5px;border-radius:4px;border:1px solid #555;background:#1b5e20;color:#ddd;font-size:11px;cursor:pointer;margin-top:4px">📤 Отправить логи → smrtcrm</button>
       <button id="epd2c-close" style="position:absolute;top:8px;right:10px;background:none;border:none;color:#888;font-size:18px;cursor:pointer">×</button>
     </div>`;
 }
@@ -6666,15 +6635,6 @@ function _attachCreateLogic(root) {
   const btnClose = $("epd2c-close");
   const btnLogs  = $("epd2c-logs");
   if (btnLogs) btnLogs.addEventListener("click", () => _epdDownloadLogs("manual"));
-  const btnUploadLogs = $("epd2c-upload-logs");
-  if (btnUploadLogs) {
-    btnUploadLogs.addEventListener("click", async () => {
-      st("Отправка логов на smrtcrm.ru…");
-      const r = await _epdUploadLogs("manual", { promptForToken: true });
-      if (r.ok) st(`✅ Логи на smrtcrm${r.id ? ` #${r.id}` : ""}`);
-      else st(`❌ Логи: ${r.error || r.status || "ошибка"}`);
-    });
-  }
 
   let running = false;
   let checkCount = 0;

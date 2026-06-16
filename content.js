@@ -163,6 +163,11 @@ async function _epdEnsureLogUploadToken() {
 
 async function _epdUploadLogs(tag = "manual", opts = {}) {
   const report = await _epdBuildLogReport(tag);
+  if (opts.statusMessage) report.status_message = opts.statusMessage;
+  if (opts.testOutcome) {
+    report.test_outcome = opts.testOutcome;
+    _epdPatchTestOutcomeReport(report, opts.testOutcome);
+  }
   const token = opts.promptForToken
     ? await _epdEnsureLogUploadToken()
     : await _epdGetLogUploadToken();
@@ -197,12 +202,14 @@ function _epdUploadSuffix(r) {
   return ` · 📤 ${r.error || r.status || "ошибка"}`;
 }
 
-async function _epdUploadLogsAfter(tag) {
-  return _epdUploadLogs(tag, { promptForToken: false });
+async function _epdUploadLogsAfter(tag, extra = {}) {
+  return _epdUploadLogs(tag, { promptForToken: false, ...extra });
 }
 
 async function _epdStatusUpload(statusFn, tag, msg) {
-  const r = await _epdUploadLogsAfter(tag);
+  const testOutcome = /✅/.test(msg) && /тест/i.test(msg) ? "ok"
+    : /❌/.test(msg) && /тест/i.test(msg) ? "fail" : null;
+  const r = await _epdUploadLogsAfter(tag, { statusMessage: msg, testOutcome });
   statusFn(msg + _epdUploadSuffix(r));
   return r;
 }
@@ -359,6 +366,8 @@ function _buildAnalytics() {
   let aiCalls = 0, aiSuccess = 0, aiFail = 0;
   let validateOK = 0, validateFail = 0, validate500 = 0;
   let testValidateOk = 0, testValidateFail = 0, testRuns = 0;
+  let testActive = false;
+  let testOutcomeRecorded = false;
   let tokenExpired = 0;
   let totalAiMs = 0, totalAiCost = 0;
   const aiModels = {};
@@ -409,10 +418,28 @@ function _buildAnalytics() {
         else aiFail++;
       }
     }
-    if (m.includes("[EPD TEST] slot:") || m.includes("[EPD TEST ML] slot:")) testRuns++;
-    if (m.includes("[EPD TEST] validate: ✅") || m.includes("[EPD TEST ML] validate: ✅")) testValidateOk++;
-    if (m.includes("[EPD TEST] validate: ❌") || m.includes("[EPD TEST] validate: token expired")
-      || m.includes("[EPD TEST ML] validate: ❌") || m.includes("[EPD TEST ML] validate: token expired")) testValidateFail++;
+    if (m.includes("[EPD TEST] slot:") || m.includes("[EPD TEST ML] slot:")) {
+      testRuns++;
+      testActive = true;
+    }
+    if (m.includes("[EPD TEST] validate: ✅") || m.includes("[EPD TEST ML] validate: ✅")) {
+      if (!testOutcomeRecorded) { testValidateOk++; testOutcomeRecorded = true; }
+      testActive = false;
+    }
+    if (m.includes("[EPD TEST] validate: ❌ TOP-5 failed")
+      || m.includes("[EPD TEST] validate: token expired")
+      || m.includes("[EPD TEST ML] validate: ❌")
+      || m.includes("[EPD TEST ML] validate: token expired")) {
+      if (!testOutcomeRecorded) { testValidateFail++; testOutcomeRecorded = true; }
+      testActive = false;
+    }
+    // validateCaptcha() пишет [EPD] ✅ validate до строки [EPD TEST] validate (если upload раньше log)
+    if (testActive && !testOutcomeRecorded
+      && m.includes("[EPD] ✅ validate:") && m.includes("isValid=true")) {
+      testValidateOk++;
+      testOutcomeRecorded = true;
+      testActive = false;
+    }
     if (m.includes("validate: HTTP 200") || m.includes("isValid=true")) validateOK++;
     if (m.includes("validate: HTTP 400")) validateFail++;
     if (m.includes("validate: HTTP 500")) validate500++;
@@ -566,6 +593,38 @@ function _buildAnalytics() {
   }
 
   return a;
+}
+
+/** Синхронизировать analytics с явным исходом теста (status UI vs stats). */
+function _epdPatchTestOutcomeReport(report, testOutcome) {
+  if (!testOutcome || !report?.analytics?.stats) return;
+  const s = report.analytics.stats;
+  const a = report.analytics;
+  const kind = s.captcha_kind || "puzzle";
+  if (testOutcome === "ok") {
+    s.test_validate_ok = Math.max(s.test_validate_ok || 0, 1);
+    if (s.test_validate_fail > 0 && s.test_validate_ok > 0) s.test_validate_fail = 0;
+    const okRec = kind === "click"
+      ? "✅ Click-тест: координаты приняты сервером (перезапись не выполнялась)."
+      : "✅ Puzzle-тест: вариант EdgeMatch принят сервером (перезапись не выполнялась).";
+    a.recommendations = (a.recommendations || []).filter(
+      (r) => !/Тест solvers без validate|тест.*не прошёл|отклонены/i.test(r),
+    );
+    if (!a.recommendations.some((r) => /Puzzle-тест:.*принят|Click-тест:.*принят/i.test(r))) {
+      a.recommendations.unshift(okRec);
+    }
+  } else if (testOutcome === "fail") {
+    s.test_validate_fail = Math.max(s.test_validate_fail || 0, 1);
+    const failRec = kind === "click"
+      ? "❌ Click-тест: координаты отклонены — проверьте NCC/ML или разметку."
+      : "❌ Puzzle-тест: EdgeMatch TOP-5 не прошёл validate — в «Старт» подключится AI/RuCaptcha.";
+    a.recommendations = (a.recommendations || []).filter(
+      (r) => !/Тест solvers без validate/i.test(r),
+    );
+    if (!a.recommendations.some((r) => /тест.*отклонен|не прошёл validate/i.test(r))) {
+      a.recommendations.unshift(failRec);
+    }
+  }
 }
 
 const RESCHEDULE_RE =
@@ -5964,18 +6023,18 @@ function attachLogic(root, reservationUuid) {
       if (ok?.successToken) {
         const totalMs = Date.now() - testT0;
         testInProgress = false;
-        await _epdStatusUpload(status, "test-puzzle", `✅ Тест: кэш OK! ${totalMs}мс (validate ${vMs}мс)`);
         console.log(`[EPD TEST] validate: ✅ isValid=true | cache variant ${ranked[0].idx + 1} | ${totalMs}мс total`);
+        await _epdStatusUpload(status, "test-puzzle", `✅ Тест: кэш OK! ${totalMs}мс (validate ${vMs}мс)`);
       } else if (ok?.tokenExpired) {
         const totalMs = Date.now() - testT0;
         testInProgress = false;
-        await _epdStatusUpload(status, "test-puzzle", `Тест: токен сгорел (${totalMs}мс)`);
         console.log("[EPD TEST] validate: token expired");
+        await _epdStatusUpload(status, "test-puzzle", `Тест: токен сгорел (${totalMs}мс)`);
       } else {
         const totalMs = Date.now() - testT0;
         testInProgress = false;
-        await _epdStatusUpload(status, "test-puzzle", `❌ Тест: кэш не прошёл validate (${totalMs}мс)`);
         console.log(`[EPD TEST] validate: ❌ cache miss on server | ${totalMs}мс total`);
+        await _epdStatusUpload(status, "test-puzzle", `❌ Тест: кэш не прошёл validate (${totalMs}мс)`);
       }
       return;
     }
@@ -6005,22 +6064,22 @@ function attachLogic(root, reservationUuid) {
       if (ok?.successToken) {
         const totalMs = Date.now() - testT0;
         testInProgress = false;
+        console.log(
+          `[EPD TEST] validate: ✅ isValid=true | variant ${c.idx + 1}/${maxTries} | ` +
+          `EdgeMatch ${edgeMs}мс + validate ${vMs}мс = ${totalMs}мс total | conf ${((result.confidence || 0) * 100).toFixed(0)}%`,
+        );
         await _epdStatusUpload(
           status,
           "test-puzzle",
           `✅ Тест OK! вариант ${c.idx + 1}, ${totalMs}мс (EM ${edgeMs}мс + v ${vMs}мс)`,
-        );
-        console.log(
-          `[EPD TEST] validate: ✅ isValid=true | variant ${c.idx + 1}/${maxTries} | ` +
-          `EdgeMatch ${edgeMs}мс + validate ${vMs}мс = ${totalMs}мс total | conf ${((result.confidence || 0) * 100).toFixed(0)}%`,
         );
         return;
       }
       if (ok?.tokenExpired) {
         const totalMs = Date.now() - testT0;
         testInProgress = false;
-        await _epdStatusUpload(status, "test-puzzle", `Тест: токен сгорел на ${attempt + 1}/${maxTries} (${totalMs}мс)`);
         console.log(`[EPD TEST] validate: token expired | ${totalMs}мс total`);
+        await _epdStatusUpload(status, "test-puzzle", `Тест: токен сгорел на ${attempt + 1}/${maxTries} (${totalMs}мс)`);
         return;
       }
       console.log(`[EPD TEST] validate: ❌ variant ${c.idx + 1} (${vMs}мс)`);
@@ -6028,16 +6087,15 @@ function attachLogic(root, reservationUuid) {
 
     const totalMs = Date.now() - testT0;
     testInProgress = false;
+    console.log(
+      `[EPD TEST] validate: ❌ TOP-5 failed | EdgeMatch ${edgeMs}мс | ${totalMs}мс total | ` +
+      `conf ${((result.confidence || 0) * 100).toFixed(0)}%`,
+    );
     await _epdStatusUpload(
       status,
       "test-puzzle",
       `❌ Тест: TOP-5 не угадали, ${totalMs}мс (EM ${edgeMs}мс)`,
     );
-    console.log(
-      `[EPD TEST] validate: ❌ TOP-5 failed | EdgeMatch ${edgeMs}мс | ${totalMs}мс total | ` +
-      `conf ${((result.confidence || 0) * 100).toFixed(0)}%`,
-    );
-    testInProgress = false;
   }
 
   async function start() {
